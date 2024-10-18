@@ -5,17 +5,18 @@ require_once '../koneksi/koneksi.php';
 if (isset($_POST['add_materi'])) {
     $judul_materi = $_POST['judul_materi'];
     
-    // Menangani upload file gambar
-    $foto_icon = $_FILES['foto_icon']['name'];
-    $target_dir = "../uploads/"; // Pastikan direktori ini ada dan bisa ditulisi
-    $target_file = $target_dir . basename($foto_icon);
-    
-    // Pindahkan file ke direktori target
-    if (move_uploaded_file($_FILES['foto_icon']['tmp_name'], $target_file)) {
-        $query = "INSERT INTO materi (judul_materi, foto_icon, created_at, status_materi) VALUES ('$judul_materi', '$target_file', NOW(), '1')";
+    // Mengambil gambar sebagai base64 jika ada
+    $foto_icon = isset($_POST['foto_icon']) ? $_POST['foto_icon'] : null;
+
+    if ($foto_icon) { // Memastikan $foto_icon tidak null
+        $foto_icon = preg_replace('#^data:image/\w+;base64,#i', '', $foto_icon); // Menghapus prefix
+        $foto_icon = base64_decode($foto_icon); // Decode base64
+
+        // Insert ke database
+        $query = "INSERT INTO materi (judul_materi, foto_icon, created_at, status_materi) VALUES ('$judul_materi', '$foto_icon', NOW(), '1')";
         $conn->query($query);
     } else {
-        echo "Sorry, there was an error uploading your file.";
+        echo "Gambar tidak valid atau tidak ada.";
     }
 }
 
@@ -24,22 +25,18 @@ if (isset($_POST['update_materi'])) {
     $id = $_POST['id'];
     $judul_materi = $_POST['judul_materi'];
     
-    // Menangani upload file gambar
-    $foto_icon = $_FILES['foto_icon']['name'];
-    $target_dir = "../uploads/";
-    $target_file = $target_dir . basename($foto_icon);
+    // Mengambil gambar sebagai base64 jika ada
+    $foto_icon = isset($_POST['foto_icon']) ? $_POST['foto_icon'] : null;
 
-    if ($foto_icon) { // Jika ada foto icon yang diunggah
-        // Pindahkan file ke direktori target
-        if (move_uploaded_file($_FILES['foto_icon']['tmp_name'], $target_file)) {
-            $query = "UPDATE materi SET judul_materi='$judul_materi', foto_icon='$target_file', status_materi='1' WHERE id='$id'";
-            $conn->query($query);
-        } else {
-            echo "Sorry, there was an error uploading your file.";
-        }
-    } else { // Jika tidak ada foto icon baru, hanya update judul
-        $query = "UPDATE materi SET judul_materi='$judul_materi', status_materi='1' WHERE id='$id'";
+    if ($foto_icon) { // Jika ada foto icon baru
+        $foto_icon = preg_replace('#^data:image/\w+;base64,#i', '', $foto_icon); // Menghapus prefix
+        $foto_icon = base64_decode($foto_icon); // Decode base64
+
+        // Update ke database
+        $query = "UPDATE materi SET judul_materi='$judul_materi', foto_icon='$foto_icon', status_materi='1' WHERE id='$id'";
         $conn->query($query);
+    } else {
+        echo "Gambar tidak valid atau tidak ada.";
     }
 }
 
@@ -61,6 +58,19 @@ $result = $conn->query("SELECT * FROM materi");
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Materi Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function previewImage(input) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                document.getElementById('imagePreview').src = reader.result;
+                document.getElementById('foto_icon').value = reader.result; // Menyimpan data base64 ke input tersembunyi
+            };
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="container mt-4">
@@ -87,7 +97,9 @@ $result = $conn->query("SELECT * FROM materi");
                 </div>
                 <div class="mb-3">
                     <label for="foto_icon" class="form-label">Foto Icon</label>
-                    <input type="file" class="form-control" name="foto_icon" accept="image/*" required>
+                    <input type="file" class="form-control" accept="image/*" onchange="previewImage(this)" required>
+                    <input type="hidden" id="foto_icon" name="foto_icon">
+                    <img id="imagePreview" src="#" alt="Image Preview" style="display:none; width: 50px; height: 50px;" />
                 </div>
                 <div class="mb-3">
                     <label for="status_materi" class="form-label">Status Materi</label>
@@ -103,8 +115,9 @@ $result = $conn->query("SELECT * FROM materi");
                         <th>ID</th>
                         <th>Judul Materi</th>
                         <th>Foto Icon</th>
-                        <th>Created At</th>
                         <th>Status Materi</th>
+                        <th>Created At</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -112,9 +125,9 @@ $result = $conn->query("SELECT * FROM materi");
                     <tr>
                         <td><?php echo $row['id']; ?></td>
                         <td><?php echo $row['judul_materi']; ?></td>
-                        <td><img src="<?php echo $row['foto_icon']; ?>" alt="Icon" width="50" height="50"></td>
-                        <td><?php echo $row['created_at']; ?></td>
+                        <td><img src="data:image/png;base64,<?php echo base64_encode($row['foto_icon']); ?>" alt="Icon" width="50" height="50"></td>
                         <td><?php echo $row['status_materi']; ?></td>
+                        <td><?php echo $row['created_at']; ?></td>
                         <td>
                             <!-- Tombol Edit -->
                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
@@ -140,7 +153,8 @@ $result = $conn->query("SELECT * FROM materi");
                                         </div>
                                         <div class="mb-3">
                                             <label for="foto_icon" class="form-label">Foto Icon</label>
-                                            <input type="file" class="form-control" name="foto_icon" accept="image/*">
+                                            <input type="file" class="form-control" accept="image/*" onchange="previewImage(this)">
+                                            <input type="hidden" id="foto_icon" name="foto_icon">
                                             <small>Biarkan kosong jika tidak ingin mengganti foto.</small>
                                         </div>
                                         <div class="mb-3">

@@ -14,8 +14,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql = "UPDATE pembayaran SET nama_pembayaran='$nama_pembayaran', harga='$harga', nomor_bank='$nomor_bank' WHERE id=$id";
     } else {
         // Tambah data baru
-        $sql = "INSERT INTO pembayaran (nama_pembayaran, harga, nomor_bank) 
-                VALUES ('$nama_pembayaran', '$harga', '$nomor_bank')";
+        $sql = "INSERT INTO pembayaran (nama_pembayaran, harga, nomor_bank, created_at) 
+                VALUES ('$nama_pembayaran', '$harga', '$nomor_bank', NOW())";
+    }
+
+    // Tambahkan eksekusi query dan penanganan kesalahan
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>alert('Data berhasil disimpan');</script>";
+        echo "<script>window.location.href = 'payment.php';</script>";
+    } else {
+        echo "<script>alert('Error: " . $conn->error . "');</script>";
     }
 }
 
@@ -23,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $conn->query("DELETE FROM pembayaran WHERE id=$id");
+    header("Location: payment.php"); // Redirect setelah menghapus
     exit;
 }
 
@@ -41,15 +50,23 @@ $result = $conn->query("SELECT * FROM pembayaran");
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CRUD Pembayaran</title>
+    <title>Pembayaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2">
-                <?php include '../sidebar.php'; ?>
+        <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-2">
+            <?php include '../sidebar.php'; ?>
+            <link rel="stylesheet" href="../assets/css/style.css">
+        </div>
+        
+        <!-- Konten Utama -->
+        <div class="col-md-10">
+            <div class="col-md-12">
+                <?php include '../header.php'; ?>
                 <link rel="stylesheet" href="../assets/css/style.css">
             </div>
 
@@ -57,7 +74,7 @@ $result = $conn->query("SELECT * FROM pembayaran");
                 <h1 class="my-4">Daftar Pembayaran</h1>
 
                 <!-- Form Tambah/Edit Pembayaran -->
-                <form method="POST" action="payment.php">
+                <form method="POST" action="../resource/payment.php">
                     <input type="hidden" name="id" value="<?= isset($pembayaran['id']) ? $pembayaran['id'] : ''; ?>">
                     <div class="mb-3">
                         <label for="nama_pembayaran" class="form-label">Nama Pembayaran</label>

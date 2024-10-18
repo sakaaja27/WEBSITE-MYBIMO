@@ -9,7 +9,7 @@ if (isset($_POST['add_user'])) {
     $phone = $_POST['phone'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT); 
 
-    $sql = "INSERT INTO users (username, email, role, phone, password, created_at) VALUES (?, ?, ?, ?, ?, NOW())";
+    $sql = "INSERT INTO users (username, email, role, phone, password) VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssiss", $username, $email, $role, $phone, $password);
 
@@ -98,7 +98,6 @@ $result = $conn->query("SELECT * FROM users");
                             <th>Email</th>
                             <th>Role</th> 
                             <th>Phone</th>
-                            <th>Created At</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -121,7 +120,6 @@ $result = $conn->query("SELECT * FROM users");
                                 ?>
                             </td> 
                             <td><?php echo $row['phone']; ?></td>
-                            <td><?php echo $row['created_at']; ?></td>
                             <td>
                                 <!-- Tombol Edit -->
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>

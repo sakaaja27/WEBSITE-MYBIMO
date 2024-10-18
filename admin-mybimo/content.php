@@ -15,15 +15,18 @@ if (!isset($conn) || !$conn) {
     $totalUsers = $resultTotalUsers ? $resultTotalUsers->fetch_assoc()['total_users'] : 0;
 
     // Mengambil total user berlangganan
-    $resultSubscribers = $conn->query("SELECT COUNT(*) AS total_subscribers FROM users WHERE subscription_status = 'premium'");
+    $resultSubscribers = $conn->query("SELECT COUNT(*) AS total_subscribers FROM pembayaran");
     $totalSubscribers = $resultSubscribers ? $resultSubscribers->fetch_assoc()['total_subscribers'] : 0;
 
     // Mengambil total materi
-    $resultTotalCourses = $conn->query("SELECT COUNT(*) AS total_courses FROM courses");
+    $resultTotalCourses = $conn->query("SELECT COUNT(*) AS total_courses FROM materi");
     $totalCourses = $resultTotalCourses ? $resultTotalCourses->fetch_assoc()['total_courses'] : 0;
 
-    // Mengambil statistik pengguna
-    $userGrowthQuery = "SELECT MONTHNAME(created_at) AS month, COUNT(id) AS user_count FROM users GROUP BY MONTH(created_at)";
+    // Mengambil statistik pengguna berdasarkan bulan
+    $userGrowthQuery = "SELECT MONTHNAME(created_at) AS month, COUNT(id) AS user_count 
+                    FROM materi 
+                    WHERE created_at IS NOT NULL
+                    GROUP BY MONTH(created_at), MONTHNAME(created_at)";
     $resultUserGrowth = $conn->query($userGrowthQuery);
 
     $months = [];
