@@ -2,9 +2,9 @@
     <div class="nk-sidebar-element nk-sidebar-head">
         <div class="nk-sidebar-brand">
             <a href="html/index.html" class="logo-link nk-sidebar-logo">
-                <img class="logo-light logo-img" src="./images/logo.png" srcset="./images/logo2x.png 2x" alt="logo">
-                <img class="logo-dark logo-img" src="./images/logo-dark.png" srcset="./images/logo-dark2x.png 2x" alt="logo-dark">
-                <img class="logo-small logo-img logo-img-small" src="./images/logo-small.png" srcset="./images/logo-small2x.png 2x" alt="logo-small">
+                <img class="logo-light logo-img" src="./images/logo_web.png" srcset="./images/logo_web.png 2x" alt="logo">
+                <img class="logo-dark logo-img" src="./images/logo_web.png" srcset="./images/logo_web.png 2x" alt="logo-dark">
+                <img class="logo-small logo-img logo-img-small" src="./images/logo_web.png" srcset="./images/logo_web.png 2x" alt="logo-small">
             </a>
         </div>
         <div class="nk-menu-trigger me-n2">
@@ -29,7 +29,7 @@
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item">
                         <a href="admin/index.php?users" class="nk-menu-link">
-                            <span class="nk-menu-icon"><em class="icon ni ni-presentation"></em></span>
+                            <span class="nk-menu-icon"><em class="icon ni ni-user-list"></em></span>
                             <span class="nk-menu-text">Users</span>
                         </a>
                     </li><!-- .nk-menu-item -->
@@ -51,13 +51,13 @@
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item">
                         <a href="admin/index.php?payment" class="nk-menu-link">
-                            <span class="nk-menu-icon"><em class="icon ni ni-presentation"></em></span>
+                            <span class="nk-menu-icon"><em class="icon ni ni-master-card"></em></span>
                             <span class="nk-menu-text">Payment</span>
                         </a>
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item">
                         <a href="admin/index.php?laporan" class="nk-menu-link">
-                            <span class="nk-menu-icon"><em class="icon ni ni-presentation"></em></span>
+                            <span class="nk-menu-icon"><em class="icon ni ni-report-profit"></em></span>
                             <span class="nk-menu-text">Laporan</span>
                         </a>
                     </li><!-- .nk-menu-item -->
