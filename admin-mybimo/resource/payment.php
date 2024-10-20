@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 VALUES ('$nama_pembayaran', '$harga', '$nomor_bank', NOW())";
     }
 
-    // Tambahkan eksekusi query dan penanganan kesalahan
+    // Eksekusi query dan penanganan kesalahan
     if ($conn->query($sql) === TRUE) {
         echo "<script>alert('Data berhasil disimpan');</script>";
         echo "<script>window.location.href = 'payment.php';</script>";
@@ -73,23 +73,40 @@ $result = $conn->query("SELECT * FROM pembayaran");
             <div class="col-md-10">
                 <h1 class="my-4">Daftar Pembayaran</h1>
 
-                <!-- Form Tambah/Edit Pembayaran -->
-                <form method="POST" action="../resource/payment.php">
-                    <input type="hidden" name="id" value="<?= isset($pembayaran['id']) ? $pembayaran['id'] : ''; ?>">
-                    <div class="mb-3">
-                        <label for="nama_pembayaran" class="form-label">Nama Pembayaran</label>
-                        <input type="text" name="nama_pembayaran" class="form-control" value="<?= isset($pembayaran['nama_pembayaran']) ? $pembayaran['nama_pembayaran'] : ''; ?>" required>
+                <!-- Tombol Tambah Pembayaran -->
+                <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                    Tambah Pembayaran
+                </button>
+
+                <!-- Modal untuk Tambah/Edit Pembayaran -->
+                <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="paymentModalLabel">Tambah/Edit Pembayaran</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" action="../resource/payment.php" id="paymentForm">
+                                    <input type="hidden" name="id" id="id">
+                                    <div class="mb-3">
+                                        <label for="nama_pembayaran" class="form-label">Nama Pembayaran</label>
+                                        <input type="text" name="nama_pembayaran" class="form-control" id="nama_pembayaran" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="harga" class="form-label">Harga</label>
+                                        <input type="number" name="harga" class="form-control" id="harga" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nomor_bank" class="form-label">Nomor Bank</label>
+                                        <input type="number" name="nomor_bank" class="form-control" id="nomor_bank" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Simpan</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="harga" class="form-label">Harga</label>
-                        <input type="number" name="harga" class="form-control" value="<?= isset($pembayaran['harga']) ? $pembayaran['harga'] : ''; ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="nomor_bank" class="form-label">Nomor Bank</label>
-                        <input type="number" name="nomor_bank" class="form-control" value="<?= isset($pembayaran['nomor_bank']) ? $pembayaran['nomor_bank'] : ''; ?>" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </form>
+                </div>
 
                 <hr>
 
@@ -112,7 +129,7 @@ $result = $conn->query("SELECT * FROM pembayaran");
                                 <td><?= $row['harga']; ?></td>
                                 <td><?= $row['nomor_bank']; ?></td>
                                 <td>
-                                    <a href="payment.php?edit=<?= $row['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                                    <button class="btn btn-warning btn-sm edit-btn" data-id="<?= $row['id']; ?>" data-nama="<?= $row['nama_pembayaran']; ?>" data-harga="<?= $row['harga']; ?>" data-nomor="<?= $row['nomor_bank']; ?>">Edit</button>
                                     <a href="payment.php?delete=<?= $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pembayaran ini?');">Delete</a>
                                 </td>
                             </tr>
@@ -124,5 +141,24 @@ $result = $conn->query("SELECT * FROM pembayaran");
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Script untuk menangani modal edit
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                const nama = this.getAttribute('data-nama');
+                const harga = this.getAttribute('data-harga');
+                const nomor = this.getAttribute('data-nomor');
+
+                document.getElementById('id').value = id;
+                document.getElementById('nama_pembayaran').value = nama;
+                document.getElementById('harga').value = harga;
+                document.getElementById('nomor_bank').value = nomor;
+
+                const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+                modal.show();
+            });
+        });
+    </script>
 </body>
 </html>
