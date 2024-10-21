@@ -1,0 +1,154 @@
+/* Mengimpor font */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+body {
+    font-family: "Inter", sans-serif;
+    background-image: url('../img/lingkaran.png');
+    background-size: auto ;
+    background-color: #1b78f2;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100vh;
+    margin:0;
+    padding-right: 150px;
+    position: relative;
+}
+
+.login-container {
+    width: 150%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+
+.logo-container {
+    position: absolute; /* Menggunakan posisi absolut */
+    left: 250px;
+     /* Atur sesuai keinginan untuk memindahkan ke kiri */
+}
+
+.logo-container img {
+    width: 400px;
+    margin-top: 100px;
+}
+
+.login-container {
+    width: 150%;
+    max-width: 450px;
+    padding: 20px;
+}
+
+.login-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+}
+
+.logo img {
+    width: 150px;
+    margin-bottom: 15px;
+}
+
+h2 {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 10px;
+    text-align: left;
+}
+
+p {
+    color: #777;
+    font-size: 0.9rem;
+    margin: 0 0 20px;
+    text-align: left;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.9rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #6c63ff;
+}
+
+.show-password {
+    float: right;
+    font-size: 0.8rem;
+    color: #6c63ff;
+    cursor: pointer;
+    margin-top: -25px;
+    margin-right: 10px;
+    position: relative;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.actions a {
+    color: #6c63ff;
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.actions a:hover {
+    color: #584fd6;
+}
+
+.login-button {
+    background-color: #6c63ff;
+    color: #ffffff;
+    font-size: 0.9rem;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #584fd6;
+}
+
+.signup-text {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.signup-text a {
+    color: #6c63ff;
+    text-decoration: none;
+}
+
+.signup-text a:hover {
+    color: #584fd6;
+}
+
+
+
+

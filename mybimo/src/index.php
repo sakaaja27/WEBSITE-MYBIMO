@@ -25,7 +25,7 @@
   <link href="assets-frontend/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="assets-frontend-frontend/css/main.css" rel="stylesheet">
+  <link href="assets-frontend/css/main.css" rel="stylesheet">
 
 </head>
 
@@ -38,7 +38,7 @@
 
       <a href="index.html" class="logo d-flex align-items-center me-auto">
        
-        <img src="assets/img/mybimo.png" alt="MyBimo Logo" style="height: 40px;">
+        <img src="assets-frontend/img/mybimo.png" alt="MyBimo Logo" style="height: 40px;">
     </a>
 
       <nav id="navmenu" class="navmenu">
@@ -46,7 +46,7 @@
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <a class="btn-login" href="#about">Login</a>
+      <a class="btn-login" href="auth/login.php">Login</a>
       <a class="btn-getstarted" href="#about">Get Started</a>
 
 

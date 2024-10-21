@@ -1,0 +1,120 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-image: url('../img/lingkaran.png ');
+    background-color: #1b78f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+}
+
+.logo img {
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    margin-bottom: 10px;
+    font-size: 24px;
+    color: #333;
+}
+
+p {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    text-align: left;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+input[type="text"], 
+input[type="email"], 
+input[type="password"],
+input[type="phone"] {
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+input::placeholder {
+    color: #aaa;
+}
+
+small {
+    text-align: left;
+    color: #aaa;
+    font-size: 12px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.captcha {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.captcha input {
+    margin-right: 10px;
+}
+
+.recaptcha img {
+    height: 40px;
+}
+
+.btn-create {
+    background-color: #6f46ff;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-create:hover {
+    background-color: #5b3ddd;
+}
+
+.signin-text {
+    font-size: 14px;
+    color: #777;
+    margin-top: 10px;
+}
+
+.signin-text a {
+    color: #6f46ff;
+    text-decoration: none;
+}
+
+.signin-text a:hover {
+    text-decoration: underline;
+}
