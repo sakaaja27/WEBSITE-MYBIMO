@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-     <link href="assets/css/sec.css" rel="stylesheet">
+     <link href="assets-frontend/css/sec.css" rel="stylesheet">
      
     
 </head>
@@ -16,7 +16,7 @@
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
       <a href="index.html" class="logo d-flex align-items-center me-auto">      
-        <img src="assets/img/mybimo.png" alt="MyBimo Logo" style="height: 40px;">
+        <img src="assets-frontend/img/mybimo.png" alt="MyBimo Logo" style="height: 40px;">
     </a>
       <nav id="navmenu" class="navmenu">      
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
@@ -39,7 +39,7 @@
             <h5 >improve your English on MyBimo</h5>
           </div>
           <div class="col-lg-6 order-1 order-lg-2   " data-aos="zoom-out" data-aos-delay="200">
-            <img src="assets/img/logodashboard1.png" class="img-fluid animated" alt="">
+            <img src="assets-frontend/img/logodashboard1.png" class="img-fluid animated" alt="">
           </div>
         </div>
       </div>
@@ -48,11 +48,11 @@
 
     <!-- Button Box -->
     <div class="button-box">
-      <button type="button"><img src="assets/img/buttondashboard/button1.png" alt="Button 1"></button>
-      <button type="button"><img src="assets/img/buttondashboard/button2.png" alt="Button 2"></button>
-      <button type="button"><img src="assets/img/buttondashboard/button3.png" alt="Button 3"></button>
-      <button type="button"><img src="assets/img/buttondashboard/button4.png" alt="Button 4"></button>
-      <button type="button"><img src="assets/img/buttondashboard/button5.png" alt="Button 5"></button>
+      <button type="button"><img src="assets-frontend/img/buttondashboard/button1.png" alt="Button 1"></button>
+      <button type="button"><img src="assets-frontend/img/buttondashboard/button2.png" alt="Button 2"></button>
+      <button type="button"><img src="assets-frontend/img/buttondashboard/button3.png" alt="Button 3"></button>
+      <button type="button"><img src="assets-frontend/img/buttondashboard/button4.png" alt="Button 4"></button>
+      <button type="button"><img src="assets-frontend/img/buttondashboard/button5.png" alt="Button 5"></button>
     </div>
     <!-- Second Section -->
     <section id="second">
@@ -65,7 +65,7 @@
       <div class="row row-cols-1 row-cols-md-5 g-4">
         <div class="col">
           <div class="card h-100">
-            <img src="assets/img/Card/card1.png" class="card-img-top" alt="...">
+            <img src="assets-frontend/img/Card/card1.png" class="card-img-top" alt="...">
             <div class="feature">
               <div class="card-body">
                 <h5 class="card-title">Vocabulary</h5>
@@ -85,7 +85,7 @@
 
     <div class="col">
       <div class="card h-100">
-        <img src="assets/img/Card/card2.png" class="card-img-top" alt="">
+        <img src="assets-frontend/img/Card/card2.png" class="card-img-top" alt="">
         <div class="feature">
         <div class="card-body">
           <h5 class="card-title">Grammar</h5>
@@ -105,7 +105,7 @@
 
     <div class="col">
       <div class="card h-100">
-        <img src="assets/img/Card/card3.png" class="card-img-top" alt="">
+        <img src="assets-frontend/img/Card/card3.png" class="card-img-top" alt="">
         <div class="feature">
         <div class="card-body">
           <h5 class="card-title">Listening</h5>
@@ -125,7 +125,7 @@
 
     <div class="col">
       <div class="card h-100">
-        <img src="assets/img/Card/card4.png" class="card-img-top" alt="">
+        <img src="assets-frontend/img/Card/card4.png" class="card-img-top" alt="">
         <div class="feature">
         <div class="card-body">
           <h5 class="card-title">Reading</h5>
@@ -145,7 +145,7 @@
 
     <div class="col">
       <div class="card h-100">
-        <img src="assets/img/Card/card5.png" class="card-img-top" alt="">
+        <img src="assets-frontend/img/Card/card5.png" class="card-img-top" alt="">
         <div class="feature">
         <div class="card-body">
           <h5 class="card-title">Pronouns</h5>
@@ -176,13 +176,13 @@
     <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" style="width: 100%; height: auto;">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="assets/img/carousel/carousel1.jpg" class="d-block w-100" alt="">
+          <img src="assets-frontend/img/carousel/carousel1.jpg" class="d-block w-100" alt="">
         </div>
         <div class="carousel-item">
-          <img src="assets/img/carousel/carousel2.png" class="d-block w-100" alt="">
+          <img src="assets-frontend/img/carousel/carousel2.png" class="d-block w-100" alt="">
         </div>
         <div class="carousel-item">
-          <img src="assets/img/carousel/carousel3.png" class="d-block w-100" alt="">
+          <img src="assets-frontend/img/carousel/carousel3.png" class="d-block w-100" alt="">
         </div>
       </div>
 

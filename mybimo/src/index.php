@@ -9,8 +9,8 @@
   <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <link href="assets/img/favicon.png" rel="icon">
-  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <link href="assets-frontend/img/favicon.png" rel="icon">
+  <link href="assets-frontend/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -18,14 +18,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
   <!-- Vendor CSS Files -->
-  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
-  <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-  <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <link href="assets-frontend/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets-frontend/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets-frontend/vendor/aos/aos.css" rel="stylesheet">
+  <link href="assets-frontend/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="assets-frontend/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
   <!-- Main CSS File -->
-  <link href="assets/css/main.css" rel="stylesheet">
+  <link href="assets-frontend-frontend/css/main.css" rel="stylesheet">
 
 </head>
 
@@ -60,7 +60,7 @@
     <!-- Hero Section -->
     <section id="hero" class="hero section dark-background">
 
-      <img src="assets/img/lingkaran.png" alt="Background Circle" class="circle-background">
+      <img src="assets-frontend/img/lingkaran.png" alt="Background Circle" class="circle-background">
   
 
       <div class="container">
@@ -72,7 +72,7 @@
             </div>
           </div>
           <div class="col-lg-6 order-1 order-lg-2   " data-aos="zoom-out" data-aos-delay="200">
-            <img src="assets/img/img1.png" class="img-fluid animated" alt="">
+            <img src="assets-frontend/img/img1.png" class="img-fluid animated" alt="">
           </div>
         </div>
       </div>
@@ -123,14 +123,14 @@
             } 
           </script>
           <div class="swiper-wrapper align-items-center">
-            <div class="swiper-slide"><img src="assets/img/clients/Component 1.png" class="img-fluid" ></div>
-            <div class="swiper-slide"><img src="assets/img/clients/Component 2.png" class="img-fluid" ></div>
-            <div class="swiper-slide"><img src="assets/img/clients/Component 3.png" class="img-fluid" ></div>
-            <div class="swiper-slide"><img src="assets/img/clients/Component 4.png" class="img-fluid" ></div>
-            <div class="swiper-slide"><img src="assets/img/clients/Component 5.png" class="img-fluid" ></div>
-            <div class="swiper-slide"><img src="assets/img/clients/Component 6.png" class="img-fluid" ></div>
-            <div class="swiper-slide"><img src="assets/img/clients/Component 7.png" class="img-fluid" ></div>
-            <div class="swiper-slide"><img src="assets/img/clients/Component 8.png" class="img-fluid" ></div>
+            <div class="swiper-slide"><img src="assets-frontend/img/clients/Component 1.png" class="img-fluid" ></div>
+            <div class="swiper-slide"><img src="assets-frontend/img/clients/Component 2.png" class="img-fluid" ></div>
+            <div class="swiper-slide"><img src="assets-frontend/img/clients/Component 3.png" class="img-fluid" ></div>
+            <div class="swiper-slide"><img src="assets-frontend/img/clients/Component 4.png" class="img-fluid" ></div>
+            <div class="swiper-slide"><img src="assets-frontend/img/clients/Component 5.png" class="img-fluid" ></div>
+            <div class="swiper-slide"><img src="assets-frontend/img/clients/Component 6.png" class="img-fluid" ></div>
+            <div class="swiper-slide"><img src="assets-frontend/img/clients/Component 7.png" class="img-fluid" ></div>
+            <div class="swiper-slide"><img src="assets-frontend/img/clients/Component 8.png" class="img-fluid" ></div>
           </div>
         </div>
 
@@ -156,7 +156,7 @@
           </div>
 
           <div class="col-lg-5 order-1 order-lg-2 why-us-img">
-            <img src="assets/img/why-us.png" class="img-fluid" alt="" data-aos="zoom-in" data-aos-delay="100" >
+            <img src="assets-frontend/img/why-us.png" class="img-fluid" alt="" data-aos="zoom-in" data-aos-delay="100" >
           </div>
         </div>
 
@@ -174,7 +174,7 @@
 
       <!-- Ubah urutan kolom: Gambar di sebelah kiri (order 1) -->
       <div class="col-lg-5 order-1 order-lg-1 skills-img">
-        <img src="assets/img/why-us2.png" class="img-fluid" alt="" data-aos="zoom-in" data-aos-delay="100">
+        <img src="assets-frontend/img/why-us2.png" class="img-fluid" alt="" data-aos="zoom-in" data-aos-delay="100">
       </div>
 
       <!-- Teks di sebelah kanan (order 2) -->
@@ -211,7 +211,7 @@
           </div>
 
           <div class="col-lg-5 order-1 order-lg-2 why-us-img">
-            <img src="assets/img/why-us3.png" class="img-fluid" alt="" data-aos="zoom-in" data-aos-delay="100" >
+            <img src="assets-frontend/img/why-us3.png" class="img-fluid" alt="" data-aos="zoom-in" data-aos-delay="100" >
           </div>
         </div>
 
@@ -230,15 +230,15 @@
       </div>
        
        <div class="gambar-tengah">
-        <img src="assets/img/appdownload.png" class="gambardownload" >
+        <img src="assets-frontend/img/appdownload.png" class="gambardownload" >
        </div>
 
        <div class="gambar-tengah">
-        <img src="assets/img/gambarpalingbawah.PNG" class="gambardownload" >
+        <img src="assets-frontend/img/gambarpalingbawah.PNG" class="gambardownload" >
        </div>
 
        <div class="gambar-bawah">
-        <img src="assets/img/gambarbawah.png" class="gambartengah" alt="" data-aos="zoom-in" data-aos-delay="100">
+        <img src="assets-frontend/img/gambarbawah.png" class="gambartengah" alt="" data-aos="zoom-in" data-aos-delay="100">
        </div>
 
        
@@ -258,17 +258,17 @@
   <div id="preloader"></div>
 
   <!-- Vendor JS Files -->
-  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
-  <script src="assets/vendor/aos/aos.js"></script>
-  <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-  <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script src="assets/vendor/waypoints/noframework.waypoints.js"></script>
-  <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
-  <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="assets-frontend/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets-frontend/vendor/php-email-form/validate.js"></script>
+  <script src="assets-frontend/vendor/aos/aos.js"></script>
+  <script src="assets-frontend/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="assets-frontend/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="assets-frontend/vendor/waypoints/noframework.waypoints.js"></script>
+  <script src="assets-frontend/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="assets-frontend/vendor/isotope-layout/isotope.pkgd.min.js"></script>
 
   <!-- Main JS File -->
-  <script src="assets/js/main.js"></script>
+  <script src="assets-frontend/js/main.js"></script>
 
 </body>
 
