@@ -5,38 +5,68 @@ require_once '../koneksi/koneksi.php';
 if (isset($_POST['add_materi'])) {
     $judul_materi = $_POST['judul_materi'];
 
-    // Mengambil gambar sebagai base64 jika ada
+    // Mengambil data base64 dari hidden input yang sudah diisi oleh JavaScript
     $foto_icon = isset($_POST['foto_icon']) ? $_POST['foto_icon'] : null;
 
-    if ($foto_icon) { // Memastikan $foto_icon tidak null
-        $foto_icon = preg_replace('#^data:image/\w+;base64,#i', '', $foto_icon); // Menghapus prefix
-        $foto_icon = base64_decode($foto_icon); // Decode base64
+    if ($foto_icon) {
+        // Menghapus prefix data base64
+        $foto_icon = preg_replace('#^data:image/\w+;base64,#i', '', $foto_icon);
 
         // Insert ke database
-        $query = "INSERT INTO materi (judul_materi, foto_icon, created_at, status_materi) VALUES ('$judul_materi', '$foto_icon', NOW(), '1')";
-        $conn->query($query);
+        $query = "INSERT INTO materi (judul_materi, foto_icon, created_at, status_materi) VALUES (?, ?, NOW(), '1')";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ss", $judul_materi, $foto_icon);
+
+        if ($stmt->execute()) {
+            echo "Data berhasil ditambahkan";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+        $stmt->close();
     } else {
         echo "Gambar tidak valid atau tidak ada.";
     }
 }
 
+
 // Fungsi untuk mengedit materi
 if (isset($_POST['update_materi'])) {
     $id = $_POST['id'];
     $judul_materi = $_POST['judul_materi'];
+    $status_materi = $_POST['status_materi'];
 
     // Mengambil gambar sebagai base64 jika ada
     $foto_icon = isset($_POST['foto_icon']) ? $_POST['foto_icon'] : null;
 
-    if ($foto_icon) { // Jika ada foto icon baru
-        $foto_icon = preg_replace('#^data:image/\w+;base64,#i', '', $foto_icon); // Menghapus prefix
-        $foto_icon = base64_decode($foto_icon); // Decode base64
-
-        // Update ke database
-        $query = "UPDATE materi SET judul_materi='$judul_materi', foto_icon='$foto_icon', status_materi='1' WHERE id='$id'";
-        $conn->query($query);
+    if ($foto_icon) { 
+        $foto_icon = preg_replace('#^data:image/\w+;base64,#i', '', $foto_icon); 
+        $foto_icon = base64_decode($foto_icon); 
+        
+        // Gunakan prepared statement dengan parameter blob
+        $query = "UPDATE materi SET judul_materi=?, foto_icon=?, status_materi=? WHERE id=?";
+        $stmt = $conn->prepare($query);
+        $null = NULL;
+        $stmt->bind_param("sbsi", $judul_materi, $null, $status_materi, $id);
+        $stmt->send_long_data(1, $foto_icon);
+        
+        if ($stmt->execute()) {
+            echo "<script>alert('Data berhasil diperbarui');</script>";
+        } else {
+            echo "<script>alert('Error: " . $stmt->error . "');</script>";
+        }
+        $stmt->close();
     } else {
-        echo "Gambar tidak valid atau tidak ada.";
+        // Update tanpa mengubah foto_icon
+        $query = "UPDATE materi SET judul_materi=?, status_materi=? WHERE id=?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssi", $judul_materi, $status_materi, $id);
+        
+        if ($stmt->execute()) {
+            echo "<script>alert('Data berhasil diperbarui');</script>";
+        } else {
+            echo "<script>alert('Error: " . $stmt->error . "');</script>";
+        }
+        $stmt->close();
     }
 }
 
