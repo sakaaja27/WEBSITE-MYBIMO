@@ -4,22 +4,25 @@ $username = $_POST['username'];
 $email = $_POST['email'];
 $phone = $_POST['phone'];
 $role = $_POST['role'] ?? "0";
+
+// Set upload_image ke NULL jika tidak ada data
+$upload_image = !empty($_POST['upload_image']) ? $_POST['upload_image'] : NULL;
 $password = $_POST['password'];
 
-$query = "SELECT * FROM users WHERE  username = '".$username."'";
+$query = "SELECT * FROM users WHERE email = '".$email."'";
 $msql = mysqli_query($conn, $query);
 $result = mysqli_num_rows($msql);
 
 if (!empty($username) && !empty($email) && !empty($phone) && !empty($password)){
     if ($result == 0) {
-        $regis = "INSERT INTO users (username, email, phone,role, password) VALUES ('".$username."', '".$email."', '".$phone."','".$role."', '".md5($password)."')";
-        $mslregis = mysqli_query($conn,$regis);
-
+        // Gunakan 'NULL' tanpa tanda kutip untuk menyisipkan NULL ke database
+        $regis = "INSERT INTO users (username, email, phone, role, upload_image, password) VALUES ('".$username."', '".$email."', '".$phone."', '".$role."', ".($upload_image === NULL ? 'NULL' : "'".$upload_image."'").", '".md5($password)."')";
+        $mslregis = mysqli_query($conn, $regis);
         echo "Daftar Berhasil";
-    }else{
-        echo "Username Sudah Terdaftar";
+    } else {
+        echo "Email Sudah Terdaftar";
     }
-}else{
+} else {
     echo "Data Tidak Boleh Kosong";
 }
 ?>
