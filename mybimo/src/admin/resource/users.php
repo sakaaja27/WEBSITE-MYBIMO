@@ -102,9 +102,12 @@ $result = $conn->query("SELECT * FROM users");
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while ($row = $result->fetch_assoc()): ?>
+                            <?php while ($row = $result->fetch_assoc()): 
+                                // $i = '';
+                                // $id = $i++;
+                                ?>
                                 <tr>
-                                    <td><?php echo $row['id']; ?></td>
+                                    <td><?php echo $id ?></td>
                                     <td><?php echo $row['username']; ?></td>
                                     <td><?php echo $row['email']; ?></td>
                                     <td>

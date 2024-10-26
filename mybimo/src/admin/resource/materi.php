@@ -90,7 +90,7 @@ $result = $conn->query("SELECT * FROM materi");
                                 <th>Judul Materi</th>
                                 <th>Foto Icon</th>
                                 <th>Status Materi</th>
-                                <th>Created At</th>
+                                <!-- <th>Created At</th> -->
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -101,7 +101,7 @@ $result = $conn->query("SELECT * FROM materi");
                                     <td><?php echo $row['judul_materi']; ?></td>
                                     <td><img src="data:image/png;base64,<?php echo base64_encode($row['foto_icon']); ?>" alt="Icon" width="50" height="50"></td>
                                     <td><?php echo $row['status_materi']; ?></td>
-                                    <td><?php echo $row['created_at']; ?></td>
+                                    <!--  -->
                                     <td>
                                         <!-- Tombol Edit -->
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>

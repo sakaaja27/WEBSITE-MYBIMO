@@ -1,8 +1,8 @@
 <?php 
-    include "../auth/koneksi.php";
+    include "../koneksi/koneksi.php";
 
     $query = "SELECT * FROM pembayaran where id = 1";
-    $msql = mysqli_query($connect, $query);
+    $msql = mysqli_query($conn, $query);
     $json = array();
 
     while ($row = mysqli_fetch_assoc($msql)) {
@@ -10,6 +10,6 @@
     }
 
     echo json_encode($json);
-    mysqli_close($connect);
+    mysqli_close($conn);
 
 ?>

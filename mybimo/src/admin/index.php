@@ -25,6 +25,8 @@
                     <?php include('./resource/soal.php') ?>
                 <?php elseif (isset($_GET['laporan'])): ?>
                     <?php include('./resource/laporan.php') ?>
+                    <?php elseif (isset($_GET['transaksi'])): ?>
+                        <?php include('./resource/transaksi.php') ?>
                 <?php else: ?>
                     <?php include('main.php') ?>
                 <?php endif; ?>
