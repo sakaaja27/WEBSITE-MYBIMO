@@ -15,8 +15,11 @@ $result = mysqli_num_rows($msql);
 
 if (!empty($username) && !empty($email) && !empty($phone) && !empty($password)){
     if ($result == 0) {
+        // Hash password menggunakan PASSWORD_DEFAULT
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        
         // Gunakan 'NULL' tanpa tanda kutip untuk menyisipkan NULL ke database
-        $regis = "INSERT INTO users (username, email, phone, role, upload_image, password) VALUES ('".$username."', '".$email."', '".$phone."', '".$role."', ".($upload_image === NULL ? 'NULL' : "'".$upload_image."'").", '".md5($password)."')";
+        $regis = "INSERT INTO users (username, email, phone, role, upload_image, password) VALUES ('".$username."', '".$email."', '".$phone."', '".$role."', ".($upload_image === NULL ? 'NULL' : "'".$upload_image."'").", '".$hashed_password."')";
         $mslregis = mysqli_query($conn, $regis);
         echo "Daftar Berhasil";
     } else {

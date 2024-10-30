@@ -17,9 +17,6 @@ if ($new_password !== $confirm_password) {
     exit();
 }
 
-// Hash password lama
-$old_password_hashed = md5($old_password);
-
 // Cek password lama
 $sql = "SELECT password FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
@@ -29,8 +26,8 @@ $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    if ($row['password'] === $old_password_hashed) {
-        $new_password_hashed = md5($new_password);
+    if (password_verify($old_password, $row['password'])) {
+        $new_password_hashed = password_hash($new_password, PASSWORD_DEFAULT);
         $sql = "UPDATE users SET password = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ss", $new_password_hashed, $user_id);
@@ -44,9 +41,9 @@ if ($result->num_rows > 0) {
         echo json_encode(array("success" => false, "message" => "Old password is incorrect."));
     }
 } else {
-    echo json_encode(array("success" => false, "message" => "User  not found."));
+    echo json_encode(array("success" => false, "message" => "User not found."));
 }
 
 $stmt->close();
 $conn->close();
-?>  
+?>
