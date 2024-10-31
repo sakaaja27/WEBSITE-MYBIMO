@@ -15,6 +15,9 @@ body {
     position: relative;
 }
 
+
+
+
 .login-container {
     width: 150%;
     max-width: 450px;
@@ -120,7 +123,7 @@ p {
 }
 
 .login-button {
-    background-color: #6c63ff;
+    background-color: #1B78F2;
     color: #ffffff;
     font-size: 0.9rem;
     padding: 10px;
@@ -131,7 +134,7 @@ p {
 }
 
 .login-button:hover {
-    background-color: #584fd6;
+    background-color: #025FD9;
 }
 
 .signup-text {
@@ -141,7 +144,7 @@ p {
 }
 
 .signup-text a {
-    color: #6c63ff;
+    color: #1B78F2;
     text-decoration: none;
 }
 

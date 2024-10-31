@@ -12,6 +12,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
 }
 
 .container {
@@ -90,7 +91,7 @@ small {
 }
 
 .btn-create {
-    background-color: #6f46ff;
+    background-color: #1B78F2;
     color: white;
     padding: 12px;
     border: none;
@@ -101,7 +102,7 @@ small {
 }
 
 .btn-create:hover {
-    background-color: #5b3ddd;
+    background-color: #025FD9;
 }
 
 .signin-text {
@@ -111,7 +112,7 @@ small {
 }
 
 .signin-text a {
-    color: #6f46ff;
+    color: #1B78F2;
     text-decoration: none;
 }
 

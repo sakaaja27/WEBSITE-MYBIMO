@@ -1,27 +1,26 @@
 <?php
 require '../koneksi/koneksi.php'; 
 
+$showEmailExistsAlert = false;
+$showSuccessAlert = false;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Debug koneksi database
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
-    } else {
-        echo "Connection to database successful!<br>"; // Debug untuk memastikan koneksi berhasil
     }
 
-    // Mengambil data dari form
     $username = $_POST['username'];
     $email = $_POST['email'];
     $phone = $_POST['phone'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash password
-    $role = 0; // Set default role user ke 0
-
-    // Debug input form
-    echo "Username: $username, Email: $email, Phone: $phone, Password Hash: $password <br>";
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $role = 0;
 
     if (empty($username) || empty($email) || empty($phone) || empty($_POST['password'])) {
-        echo "<script>alert('Please fill in all fields.');</script>";
-        exit(); // Hentikan eksekusi script
+        echo "<script>
+            alert('Please fill in all fields.');
+            window.location.href='../auth/register.php';
+        </script>";
+        exit();
     }
 
     // Cek apakah email sudah ada di database
@@ -31,35 +30,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $email_check_stmt->get_result();
 
     if ($result->num_rows > 0) {
-        echo "<script>alert('Email sudah digunakan! Silakan gunakan email lain.');</script>";
-        
-        exit(); // Hentikan eksekusi script
-    }
-
-    
-
-    // Siapkan query
-    $stmt = $conn->prepare("INSERT INTO users (username, email, phone, password, role) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssi", $username, $email, $phone, $password, $role); // 'i' untuk integer
-
-    // Eksekusi query dan cek apakah berhasil
-    if ($stmt->execute()) {
-        echo "<script>alert('Account created successfully!');</script>";
-        header("Location: auth/login.php"); // Redirect ke halaman login
-        exit();
+        $showEmailExistsAlert = true;
     } else {
-        // Debug query error jika gagal
-        echo "Error inserting data: " . $stmt->error; // Menampilkan error dari statement
-    }
-    
+        // Siapkan query untuk memasukkan data baru
+        $stmt = $conn->prepare("INSERT INTO users (username, email, phone, password, role) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssi", $username, $email, $phone, $password, $role);
 
-    // Tutup statement
-    $stmt->close();
+        if ($stmt->execute()) {
+            $showSuccessAlert = true;
+        } else {
+            echo "<script>
+                alert('Error inserting data: " . $stmt->error . "');
+                window.location.href='../auth/register.php';
+            </script>";
+        }
+        
+        $stmt->close();
+    }
 }
 
-// Tutup koneksi setelah selesai
 mysqli_close($conn);
 ?>
+
 
 
 
@@ -71,12 +63,14 @@ mysqli_close($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account</title>
     <link rel="stylesheet" href="../assets-frontend/css/register.css">
-    <link rel="icon" type="image/png" href="otp-icon.png"> <!-- Add your favicon here -->
+    <link rel="icon" type="image/png" href="otp-icon.png">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
     <div class="container">
         <div class="logo">
-            <img src="../assets-frontend/img/mybimo.png" alt="OTP Logo"> <!-- Add your logo image file -->
+            <img src="../assets-frontend/img/mybimo.png" alt="OTP Logo">
         </div>
         <h2>Create your account</h2>
         <p>Enter your personal details to create account</p>
@@ -95,13 +89,37 @@ mysqli_close($conn);
             <label for="password">Password</label>
             <input type="password" name="password" placeholder="Password" required>
 
-
-           
-
             <button type="submit" name="register" class="btn-create">Create Account</button>
-
             <p class="signin-text">Already have an account? <a href="../auth/login.php">Sign in</a></p>
         </form>
     </div>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        <?php if ($showEmailExistsAlert): ?>
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Email sudah digunakan! Silakan gunakan email lain.',
+                confirmButtonText: 'OK',
+                backdrop : false
+            });
+        <?php endif; ?>
+
+        <?php if ($showSuccessAlert): ?>
+            Swal.fire({
+                icon: 'success',
+                title: 'Account created successfully!',
+                showConfirmButton: false,
+                timer: 1500,
+                backdrop : false
+            }).then(() => {
+                window.location.href = '../auth/login.php';
+            });
+        <?php endif; ?>
+    </script>
+    
 </body>
 </html>
+
