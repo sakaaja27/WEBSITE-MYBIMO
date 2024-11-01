@@ -1,6 +1,13 @@
 <?php
 require_once '../koneksi/koneksi.php';
 
+$validImageExtension = ['jpg', 'jpeg', 'png'];
+
+$target_dir = "../getData/storage/";  //direktori untuk menyimpan gambar
+if (!file_exists($target_dir)) {
+    mkdir($target_dir, 0777, true);
+}
+
 // Proses penambahan pengguna baru
 if (isset($_POST['add_user'])) {
     $username = $_POST['username'];
@@ -9,71 +16,85 @@ if (isset($_POST['add_user'])) {
     $phone = $_POST['phone'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    // Proses upload gambar
-    $upload_dir = '../storageImage'; // Ganti dengan direktori yang sesuai
-    $upload_file = $upload_dir . basename($_FILES['upload_image']['name']);
-    $upload_image = $_FILES['upload_image']['name'];
-
-    // Pastikan direktori ada
-    if (!is_dir($upload_dir)) {
-        mkdir($upload_dir, 0777, true);
-    }
-
-    if (move_uploaded_file($_FILES['upload_image']['tmp_name'], $upload_file)) {
-        $sql = "INSERT INTO users (username, email, role, phone, password, upload_image) VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssisss", $username, $email, $role, $phone, $password, $upload_image);
-        
-        if ($stmt->execute()) {
-            echo "<script>alert('User berhasil ditambahkan!');</script>";
-        } else {
-            echo "<script>alert('Gagal menambahkan user');</script>";
-        }
+    if ($_FILES["upload_image"]["error"] == 4) {
+        echo "<script>alert('Image Does Not Exist');</script>";
     } else {
-        echo "<script>alert('Gagal mengupload gambar.');</script>";
+        $fileName = $_FILES["upload_image"]["name"];
+        $fileSize = $_FILES["upload_image"]["size"];
+        $tmpName = $_FILES["upload_image"]["tmp_name"];
+
+        $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        if (!in_array($imageExtension, $validImageExtension)) {
+            echo "<script>alert('Invalid Image Extension');</script>";
+        } else if ($fileSize > 1000000) {
+            echo "<script>alert('Image Size Is Too Large');</script>";
+        } else {
+            $newImageName = uniqid() . '.' . $imageExtension;
+
+            if (move_uploaded_file($tmpName, $targetFilePath)) {
+                $sql = "INSERT INTO users (username, email, role, phone, password, upload_image) 
+                        VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssisss", $username, $email, $role, $phone, $password, $targetFilePath);
+
+                if ($stmt->execute()) {
+                    echo "<script>alert('User berhasil ditambahkan!'); window.location.href='admin/index.php?users';</script>";
+                } else {
+                    echo "<script>alert('Gagal menambahkan user: " . $stmt->error . "');</script>";
+                }
+            } else {
+                echo "<script>alert('Failed to upload image');</script>";
+            }
+            $stmt->close();
+        }
     }
 }
+// End penambahan pengguna baru
 
-// Proses update pengguna
+// Start Proses update pengguna
 if (isset($_POST['update_user'])) {
     $id = $_POST['id'];
     $username = $_POST['username'];
     $email = $_POST['email'];
     $role = (int)$_POST['role'];
     $phone = $_POST['phone'];
+    $newImageName = "";
 
-    // Proses upload gambar (jika ada)
-    if ($_FILES['upload_image']['error'] == 0) { // Jika ada gambar yang diupload
-        $upload_dir = '../storageImage';
-        $upload_file = $upload_dir . basename($_FILES['upload_image']['name']);
-        $upload_image = $_FILES['upload_image']['name'];
+    if ($_FILES["upload_image"]["error"] == 0) { // Jika ada gambar baru yang diunggah
+        $fileName = $_FILES["upload_image"]["name"];
+        $fileSize = $_FILES["upload_image"]["size"];
+        $tmpName = $_FILES["upload_image"]["tmp_name"];
+        $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-        // Pastikan direktori ada
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
-
-        if (move_uploaded_file($_FILES['upload_image']['tmp_name'], $upload_file)) {
-            $sql = "UPDATE users SET username = ?, email = ?, role = ?, phone = ?, upload_image = ? WHERE id = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssissi", $username, $email, $role, $phone, $upload_image, $id);
+        if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
+            $newImageName = uniqid() . '.' . $imageExtension;
+            move_uploaded_file($tmpName, $target_dir . $newImageName);
         } else {
-            echo "<script>alert('Gagal mengupload gambar.');</script>";
+            echo "<script>alert('Invalid image extension or size too large');</script>";
         }
+    }
+
+    if ($newImageName) {
+        // Update dengan gambar baru
+        $query = "UPDATE users SET username = ?, email = ?, role = ?, upload_image = ?, phone = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssissi", $username, $email, $role, $newImageName, $phone, $id);
     } else {
-        // Jika tidak ada gambar baru, update tanpa gambar
-        $sql = "UPDATE users SET username = ?, email = ?, role = ?, phone = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
+        // Update tanpa mengganti gambar
+        $query = "UPDATE users SET username = ?, email = ?, role = ?, phone = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
         $stmt->bind_param("ssisi", $username, $email, $role, $phone, $id);
     }
 
-    // Eksekusi statement jika terdefinisi
-    if (isset($stmt) && $stmt->execute()) {
-        echo "<script>alert('User berhasil diupdate!'); window.location.href='admin/index.php?users';</script>";
+    if ($stmt->execute()) {
+        echo "<script>alert('Data berhasil diperbarui'); window.location.href='admin/index.php?users';</script>";
     } else {
-        echo "<script>alert('Gagal memperbarui user.');</script>";
+        echo "<script>alert('Error: " . $stmt->error . "');</script>";
     }
+    $stmt->close();
 }
+// End update pengguna
 
 // Proses hapus pengguna
 if (isset($_POST['delete_user_id'])) {
@@ -89,10 +110,12 @@ if (isset($_POST['delete_user_id'])) {
         echo "<script>alert('User Gagal dihapus!');</script>";
     }
 }
+//End hapus pengguna
 
 // Mengambil data pengguna
 $result = $conn->query("SELECT * FROM users");
 ?>
+
 
 <div class="nk-content nk-content-fluid">
     <div class="container-xl wide-xl">
@@ -100,6 +123,7 @@ $result = $conn->query("SELECT * FROM users");
             <div class="nk-block-head nk-block-head-sm">
                 <div class="nk-block-between">
                     <div class="nk-block-head-content">
+                        <a href=""></a>
                         <div class="nk-block-des text-soft">
                             <strong>Data Users</strong>
                         </div>
@@ -134,11 +158,11 @@ $result = $conn->query("SELECT * FROM users");
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
+                            <?php
                             $id = 1; // Inisialisasi ID untuk penomoran
                             while ($row = $result->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?php echo $id++; ?></td> <!-- Menampilkan ID -->
+                                    <td><?php echo $id++; ?></td>
                                     <td><?php echo $row['username']; ?></td>
                                     <td><?php echo $row['email']; ?></td>
                                     <td>
@@ -153,11 +177,7 @@ $result = $conn->query("SELECT * FROM users");
                                     </td>
                                     <td><?php echo $row['phone']; ?></td>
                                     <td>
-                                        <?php if (!empty($row['upload_image'])): ?>
-                                            <img src="../uploads/<?php echo $row['upload_image']; ?>" alt="Image" style="width: 50px; height: 50px;">
-                                        <?php else: ?>
-                                            No Image
-                                        <?php endif; ?>
+                                        <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/storage/<?php echo htmlspecialchars($row['upload_image']); ?>" alt="Icon" width="50" height="50">
                                     </td>
                                     <td>
                                         <!-- Tombol Edit -->
@@ -205,7 +225,6 @@ $result = $conn->query("SELECT * FROM users");
                                                         <input type="file" class="form-control" name="upload_image">
                                                     </div>
                                                 </div>
-
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                     <button type="submit" name="update_user" class="btn btn-primary">Update User</button>
@@ -214,7 +233,6 @@ $result = $conn->query("SELECT * FROM users");
                                         </div>
                                     </div>
                                 </div>
-
                             <?php endwhile; ?>
                         </tbody>
                     </table>
@@ -271,7 +289,5 @@ $result = $conn->query("SELECT * FROM users");
     </div>
 </div>
 
-<!-- Javascript untuk Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

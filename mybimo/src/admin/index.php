@@ -19,6 +19,8 @@
                     <?php include('./resource/users.php') ?>
                 <?php elseif (isset($_GET['materi'])): ?>
                     <?php include('./resource/materi.php') ?>
+                <?php elseif (isset($_GET['submateri'])): ?>
+                    <?php include('./resource/submateri.php') ?>
                 <?php elseif (isset($_GET['payment'])): ?>
                     <?php include('./resource/payment.php') ?>
                 <?php elseif (isset($_GET['soal'])): ?>

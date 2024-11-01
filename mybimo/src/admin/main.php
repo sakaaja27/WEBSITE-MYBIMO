@@ -42,7 +42,7 @@ $userCounts = json_encode($userCounts);
         <div class="nk-content-body">
             <div class="nk-block">
                 <div class="row g-gs">
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg-4 col-sm-6">
                         <div class="card h-100 bg-primary">
                             <div class="nk-cmwg nk-cmwg1">
                                 <div class="card-inner pt-3">
@@ -67,32 +67,7 @@ $userCounts = json_encode($userCounts);
                         </div><!-- .card -->
                     </div><!-- .col -->
 
-                    <div class="col-lg-3 col-sm-6">
-                        <div class="card h-100 bg-primary">
-                            <div class="nk-cmwg nk-cmwg1">
-                                <div class="card-inner pt-3">
-                                    <div class="d-flex justify-content-between">
-                                        <div class="flex-item">
-                                            <div class="text-white d-flex flex-wrap">
-                                                <span class="fs-2 me-1"><?php echo $totalUsers; ?> Users</span>
-
-                                            </div>
-                                            <h6 class="text-white">Users</h6>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                                <div class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom">
-                                    <div class="nk-cmwg1-ck">
-                                        <canvas class="campaign-line-chart-s1 rounded-bottom"
-                                            id="runningCampaign"></canvas>
-                                    </div>
-                                </div>
-                            </div><!-- .nk-cmwg -->
-                        </div><!-- .card -->
-                    </div><!-- .col -->
-
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg-4 col-sm-6">
                         <div class="card h-100 bg-primary">
                             <div class="nk-cmwg nk-cmwg1">
                                 <div class="card-inner pt-3">
@@ -115,7 +90,7 @@ $userCounts = json_encode($userCounts);
                         </div><!-- .card -->
                     </div><!-- .col -->
 
-                    <div class="col-lg-3 col-sm-6">
+                    <div class="col-lg-4 col-sm-6">
                         <div class="card h-100 bg-primary">
                             <div class="nk-cmwg nk-cmwg1">
                                 <div class="card-inner pt-3">

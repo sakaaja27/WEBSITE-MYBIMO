@@ -31,9 +31,9 @@ if (isset($_POST['delete_soal_id'])) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Soal berhasil dihapus!');</script>"; // Pastikan untuk keluar setelah redirect
+        echo "<script>alert('Soal berhasil dihapus!');</script>"; 
     } else {
-        echo "<script>alert('Soal Gagal dihapus!');</script>"; // Pastikan untuk keluar setelah redirect
+        echo "<script>alert('Soal Gagal dihapus!');</script>"; 
     }
 }
 
@@ -86,9 +86,11 @@ $sub_materi = $conn->query("SELECT * FROM sub_materi");
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while ($row = $result->fetch_assoc()): ?>
+                            <?php 
+                            $id = 1;
+                            while ($row = $result->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?php echo $row['id']; ?></td>
+                                    <td><?php echo $id++ ?></td>
                                     <td><?php echo $row['nama_sub']; ?></td>
                                     <td><?php echo $row['nama_soal']; ?></td>
                                     <td><?php echo $row['jawaban_soal']; ?></td>

@@ -99,9 +99,11 @@ $result = $conn->query("SELECT * FROM pembayaran");
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while ($row = $result->fetch_assoc()): ?>
+                            <?php 
+                            $id = 1;
+                            while ($row = $result->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?= $row['id']; ?></td>
+                                    <td><?= $id++ ?></td>
                                     <td><?= $row['nama_pembayaran']; ?></td>
                                     <td><?= $row['harga']; ?></td>
                                     <td><?= $row['nomor_bank']; ?></td>

@@ -44,6 +44,10 @@
                                         class="nk-menu-text">Materi</span></a>
                             </li>
                             <li class="nk-menu-item">
+                                <a href="admin/index.php?submateri" class="nk-menu-link"><span
+                                        class="nk-menu-text">Sub Materi</span></a>
+                            </li>
+                            <li class="nk-menu-item">
                                 <a href="admin/index.php?soal" class="nk-menu-link"><span
                                         class="nk-menu-text">Soal</span></a>
                             </li>

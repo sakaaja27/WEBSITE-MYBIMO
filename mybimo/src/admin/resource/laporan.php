@@ -5,10 +5,10 @@ require_once '../koneksi/koneksi.php';
 if (isset($_POST['add_pembayaran'])) {
     $nama_pembayaran = $_POST['nama_pembayaran'];
     $harga = $_POST['harga'];
-    $nomer_bank = $_POST['nomer_bank'];
+    $nomor_bank = $_POST['nomor_bank'];
     $tanggal = $_POST['tanggal'];
 
-    $query = "INSERT INTO pembayaran (nama_pembayaran, harga, nomer_bank, created_at) VALUES ('$nama_pembayaran', '$harga', '$nomer_bank', '$tanggal')";
+    $query = "INSERT INTO pembayaran (nama_pembayaran, harga, nomor_bank, created_at) VALUES ('$nama_pembayaran', '$harga', '$nomor_bank', '$tanggal')";
     $conn->query($query);
 }
 
@@ -17,10 +17,10 @@ if (isset($_POST['update_pembayaran'])) {
     $id = $_POST['id'];
     $nama_pembayaran = $_POST['nama_pembayaran'];
     $harga = $_POST['harga'];
-    $nomer_bank = $_POST['nomer_bank'];
+    $nomor_bank = $_POST['nomor_bank'];
     $tanggal = $_POST['tanggal'];
 
-    $query = "UPDATE pembayaran SET nama_pembayaran='$nama_pembayaran', harga='$harga', nomer_bank='$nomer_bank', created_at='$tanggal' WHERE id='$id'";
+    $query = "UPDATE pembayaran SET nama_pembayaran='$nama_pembayaran', harga='$harga', nomor_bank='$nomor_bank', created_at='$tanggal' WHERE id='$id'";
     $conn->query($query);
 }
 
@@ -47,12 +47,7 @@ $result = $conn->query($query);
     <div class="container-xl wide-xl">
         <div class="nk-content-body">
             <div class="nk-block-head nk-block-head-sm">
-                <div class="nk-block-between">
-                    <div class="nk-block-head-content">
-                        <div class="nk-block-des text-soft">
-                            <strong>Data Laporan Keuangan</strong>
-                        </div>
-                    </div><!-- .nk-block-head-content -->
+                <div class="d-flex justify-content-end">
                     <div class="nk-block-head-content">
                         <div class="toggle-wrap nk-block-tools-toggle">
                             <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1"
@@ -70,150 +65,159 @@ $result = $conn->query($query);
                                 </ul>
                             </div>
                         </div>
-                    </div><!-- .nk-block-head-content -->
-                </div><!-- .nk-block-between -->
-            </div><!-- .nk-block-head -->
+                    </div>
+                </div>
+            </div>
+            <!-- Filter Date Range -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <form method="POST" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="start_date" class="form-label">Tanggal Awal</label>
+                            <input type="text" class="form-control datepicker" name="start_date" value="<?php echo $start_date; ?>">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="end_date" class="form-label">Tanggal Akhir</label>
+                            <input type="text" class="form-control datepicker" name="end_date" value="<?php echo $end_date; ?>">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <button type="submit" class="btn btn-primary d-block">Filter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <div class="nk-block">
                 <div class="row g-gs">
-                    <table class="datatable-init table table-bordered table-hover" style="width: 100%;">
+                    <table class="datatable-init table table-bordered table-hover">
                         <thead class="table-light">
                             <tr>
                                 <th>ID</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Phone</th>
+                                <th>Nama Pembayaran</th>
+                                <th>Harga</th>
+                                <th>Nomor Bank</th>
+                                <th>Tanggal</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while ($row = $result->fetch_assoc()): ?>
+                            <?php
+                            $id = 1;
+                            while ($row = $result->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?php echo $row['id']; ?></td>
-                                    <td><?php echo $row['username']; ?></td>
-                                    <td><?php echo $row['email']; ?></td>
+                                    <td><?php echo $id++ ?></td>
+                                    <td><?php echo $row['nama_pembayaran']; ?></td>
+                                    <td><?php echo number_format($row['harga'], 0, ',', '.'); ?></td>
+                                    <td><?php echo $row['nomor_bank']; ?></td>
+                                    <td><?php echo date('d-m-Y', strtotime($row['created_at'])); ?></td>
                                     <td>
-                                        <?php
-                                        // Mengubah angka role menjadi nama
-                                        if ($row['role'] == 0) {
-                                            echo 'User';
-                                        } elseif ($row['role'] == 1) {
-                                            echo 'Admin';
-                                        } elseif ($row['role'] == 2) {
-                                            echo 'Super Admin';
-                                        }
-                                        ?>
-                                    </td>
-                                    <td><?php echo $row['phone']; ?></td>
-                                    <td>
-                                        <!-- Tombol Edit -->
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
-                                        <!-- Form Hapus -->
-                                        <form method="POST" style="display:inline;">
-                                            <input type="hidden" name="delete_user_id" value="<?php echo $row['id']; ?>">
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?');">Delete</button>
-                                        </form>
+                                        <a href="?delete=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">Delete</a>
                                     </td>
                                 </tr>
 
-                                <!-- Modal Edit Pengguna -->
-                                <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                <!-- Modal Edit -->
+                                <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <form method="POST">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel">Edit User</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <h5 class="modal-title">Edit Pembayaran</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body">
                                                     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                                                     <div class="mb-3">
-                                                        <label for="username" class="form-label">Username</label>
-                                                        <input type="text" class="form-control" name="username" value="<?php echo $row['username']; ?>" required>
+                                                        <label class="form-label">Nama Pembayaran</label>
+                                                        <input type="text" class="form-control" name="nama_pembayaran" value="<?php echo $row['nama_pembayaran']; ?>" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="email" class="form-label">Email</label>
-                                                        <input type="email" class="form-control" name="email" value="<?php echo $row['email']; ?>" required>
+                                                        <label class="form-label">Harga</label>
+                                                        <input type="number" class="form-control" name="harga" value="<?php echo $row['harga']; ?>" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="role" class="form-label">Role</label>
-                                                        <select name="role" class="form-select" required>
-                                                            <option value="0" <?php echo ($row['role'] == 0) ? 'selected' : ''; ?>>User</option>
-                                                            <option value="1" <?php echo ($row['role'] == 1) ? 'selected' : ''; ?>>Admin</option>
-                                                            <option value="2" <?php echo ($row['role'] == 2) ? 'selected' : ''; ?>>Super Admin</option>
-                                                        </select>
+                                                        <label class="form-label">Nomor Bank</label>
+                                                        <input type="text" class="form-control" name="nomor_bank" value="<?php echo $row['nomor_bank']; ?>" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="phone" class="form-label">Phone</label>
-                                                        <input type="number" class="form-control" name="phone" value="<?php echo $row['phone']; ?>" required>
+                                                        <label class="form-label">Tanggal</label>
+                                                        <input type="text" class="form-control datepicker" name="tanggal" value="<?php echo date('Y-m-d', strtotime($row['created_at'])); ?>" required>
                                                     </div>
                                                 </div>
-
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    <button type="submit" name="update_user" class="btn btn-primary">Update User</button>
+                                                    <button type="submit" name="update_pembayaran" class="btn btn-primary">Update</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
-
                             <?php endwhile; ?>
                         </tbody>
                     </table>
-                </div><!-- .row -->
-            </div><!-- .nk-block -->
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Tambah Pengguna -->
-<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+<!-- Modal Tambah -->
+<div class="modal fade" id="addModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <form method="POST">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Tambah User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Tambah Pembayaran</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" name="username" required>
+                        <label class="form-label">Nama Pembayaran</label>
+                        <input type="text" class="form-control" name="nama_pembayaran" required>
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" name="email" required>
+                        <label class="form-label">Harga</label>
+                        <input type="number" class="form-control" name="harga" required>
                     </div>
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Phone</label>
-                        <input type="number" class="form-control" name="phone" required>
+                        <label class="form-label">Nomor Bank</label>
+                        <input type="text" class="form-control" name="nomor_bank" required>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="role" class="form-label">Role</label>
-                        <select name="role" class="form-select" required>
-                            <option value="0">User</option>
-                            <option value="1">Admin</option>
-                            <option value="2">Super Admin</option>
-                        </select>
+                        <label class="form-label">Tanggal</label>
+                        <input type="text" class="form-control datepicker" name="tanggal" required>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" name="add_user" class="btn btn-primary">Tambah User</button>
+                    <button type="submit" name="add_pembayaran" class="btn btn-primary">Tambah</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Menambahkan Bootstrap JS -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- DatePicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true
+        });
+    });
+</script>
+
 </body>
 
 </html>
