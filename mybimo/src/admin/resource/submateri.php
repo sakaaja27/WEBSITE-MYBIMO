@@ -5,8 +5,8 @@ require_once '../koneksi/koneksi.php';
 $upload_dir = "../getData/storagesubmateri/"; //direktori tempat untuk menyimpan filenya
 
 //Menampilkan file pdf dan word
-if (isset($_GET['file'])) {
-    $file = $_GET['file'];
+if (isset($_POST['file'])) {
+    $file = $_POST['file'];
     $filepath = $upload_dir . $file;
     if (file_exists($filepath)) {
         if (file_exists($filepath)) {
@@ -47,7 +47,7 @@ if (isset($_POST['add_submateri'])) {
     $stmt->bind_param("iss", $id_materi, $nama_sub, $upload_file);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Sub Materi berhasil ditambahkan');</script>";
+        echo "<script>alert('Sub Materi berhasil ditambahkan'); window.location.href='admin/index.php?submateri';</script>";
     } else {
         echo "<script>alert('Gagal menambahkan Sub Materi');</script>";
     }
@@ -74,25 +74,26 @@ if (isset($_POST['update_submateri'])) {
     $stmt->bind_param("issi", $id_materi, $nama_sub, $upload_file, $id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Sub Materi berhasil diupdate');</script>";
+        echo "<script>alert('Sub Materi berhasil diupdate'); window.location.href='admin/index.php?submateri';</script>";
     } else {
         echo "<script>alert('Gagal mengupdate Sub Materi');</script>";
     }
 }
 
-// Menghaapus Data Sub Materi
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
+// Menghaapus Data Sub 
+if (isset($_POST['delete'])) {
+    $id = $_POST['delete'];
 
-    $sql = "DELETE FROM sub_materi WHERE id=?";
-    $stmt = $conn->prepare($sql);
+    $query = "DELETE FROM sub_materi WHERE id = ?";
+    $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Sub Materi berhasil dihapus');</script>";
+        echo "<script>alert('Sub Materi berhasil dihapus'); window.location.href='admin/index.php?submateri</script>";
     } else {
         echo "<script>alert('Gagal menghapus Sub Materi');</script>";
     }
+    $stmt->close();
 }
 ?>
 
@@ -160,11 +161,12 @@ if (isset($_GET['delete'])) {
                                     </td>
                                     <td><?php echo $row['created_at']; ?></td>
                                     <td>
-                                        <!-- Tombol Edit -->
-                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
-                                        <!-- Tombol Hapus -->
-                                        <a href="?delete=<?php echo $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus materi ini?');">Delete</a>
-                                    </td>
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
+                                    <form method="POST" style="display:inline;">
+                                        <input type="hidden" name="delete" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?');">Delete</button>
+                                    </form>
+                                </td>
                                 </tr>
 
                                 <!-- Modal Edit Materi -->

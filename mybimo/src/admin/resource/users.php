@@ -15,66 +15,41 @@ if (isset($_POST['add_user'])) {
     $role = (int)$_POST['role'];
     $phone = $_POST['phone'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $newImageName = "";
 
-    if ($_FILES["upload_image"]["error"] == 4) {
-        echo "<script>alert('Image Does Not Exist');</script>";
-    } else {
+    if ($_FILES["upload_image"]["error"] == 0) {
+        // Get file information
         $fileName = $_FILES["upload_image"]["name"];
         $fileSize = $_FILES["upload_image"]["size"];
         $tmpName = $_FILES["upload_image"]["tmp_name"];
-
         $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-        if (!in_array($imageExtension, $validImageExtension)) {
-            echo "<script>alert('Invalid Image Extension');</script>";
-        } else if ($fileSize > 1000000) {
-            echo "<script>alert('Image Size Is Too Large');</script>";
-        } else {
+        // Validate image
+        if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
             $newImageName = uniqid() . '.' . $imageExtension;
+            $targetFilePath = $target_dir . $newImageName; // Define the target file path
 
             if (move_uploaded_file($tmpName, $targetFilePath)) {
-                $sql = "INSERT INTO users (username, email, role, phone, password, upload_image) 
-                        VALUES (?, ?, ?, ?, ?, ?)";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssisss", $username, $email, $role, $phone, $password, $targetFilePath);
-
+                // Insert user
+                $query = "INSERT INTO users (username, email, role, phone, password, upload_image) VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("ssisss", $username, $email, $role, $phone, $password, $newImageName);
+                
                 if ($stmt->execute()) {
                     echo "<script>alert('User berhasil ditambahkan!'); window.location.href='admin/index.php?users';</script>";
                 } else {
-                    echo "<script>alert('Gagal menambahkan user: " . $stmt->error . "');</script>";
+                    echo "<script>alert('Error: " . $stmt->error . "');</script>";
                 }
+                $stmt->close();
             } else {
                 echo "<script>alert('Failed to upload image');</script>";
             }
-            $stmt->close();
-        }
-    }
-}
-// End penambahan pengguna baru
-
-// Start Proses update pengguna
-if (isset($_POST['update_user'])) {
-    $id = $_POST['id'];
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $role = (int)$_POST['role'];
-    $phone = $_POST['phone'];
-    $newImageName = "";
-
-    if ($_FILES["upload_image"]["error"] == 0) { // Jika ada gambar baru yang diunggah
-        $fileName = $_FILES["upload_image"]["name"];
-        $fileSize = $_FILES["upload_image"]["size"];
-        $tmpName = $_FILES["upload_image"]["tmp_name"];
-        $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-
-        if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
-            $newImageName = uniqid() . '.' . $imageExtension;
-            move_uploaded_file($tmpName, $target_dir . $newImageName);
         } else {
             echo "<script>alert('Invalid image extension or size too large');</script>";
         }
+    } else {
+        echo "<script>alert('Please upload an image');</script>";
     }
-
     if ($newImageName) {
         // Update dengan gambar baru
         $query = "UPDATE users SET username = ?, email = ?, role = ?, upload_image = ?, phone = ? WHERE id = ?";
@@ -87,6 +62,57 @@ if (isset($_POST['update_user'])) {
         $stmt->bind_param("ssisi", $username, $email, $role, $phone, $id);
     }
 
+    if ($stmt->execute()) {
+        echo "<script>alert('Data berhasil diperbarui'); window.location.href='admin/index.php?users';</script>";
+    } else {
+        echo "<script>alert('Error: " . $stmt->error . "');</script>";
+    }
+    $stmt->close();
+}
+
+// End penambahan pengguna baru
+
+// Start Proses update pengguna
+if (isset($_POST['update_user'])) {
+    $id = $_POST['id'];
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $role = (int)$_POST['role'];
+    $phone = $_POST['phone'];
+    $newImageName = "";
+
+    if ($_FILES["upload_image"]["error"] == 0) {
+        // Same logic as above for the update process
+        $fileName = $_FILES["upload_image"]["name"];
+        $fileSize = $_FILES["upload_image"]["size"];
+        $tmpName = $_FILES["upload_image"]["tmp_name"];
+        $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
+            $newImageName = uniqid() . '.' . $imageExtension;
+            $targetFilePath = $target_dir . $newImageName; // Define the target file path
+
+            if (move_uploaded_file($tmpName, $targetFilePath)) {
+                // Update with new image
+                $query = "UPDATE users SET username = ?, email = ?, role = ?, upload_image = ?, phone = ? WHERE id = ?";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("ssissi", $username, $email, $role, $newImageName, $phone, $id);
+            } else {
+                echo "<script>alert('Failed to upload new image');</script>";
+                return;
+            }
+        } else {
+            echo "<script>alert('Invalid image extension or size too large');</script>";
+            return;
+        }
+    } else {
+        // Update without changing the image
+        $query = "UPDATE users SET username = ?, email = ?, role = ?, phone = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssisi", $username, $email, $role, $phone, $id);
+    }
+
+    // Execute the statement
     if ($stmt->execute()) {
         echo "<script>alert('Data berhasil diperbarui'); window.location.href='admin/index.php?users';</script>";
     } else {
@@ -115,7 +141,6 @@ if (isset($_POST['delete_user_id'])) {
 // Mengambil data pengguna
 $result = $conn->query("SELECT * FROM users");
 ?>
-
 
 <div class="nk-content nk-content-fluid">
     <div class="container-xl wide-xl">

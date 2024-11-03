@@ -19,7 +19,7 @@ if (isset($_POST['add_transaksi'])) {
         $allowed_types = ['image/png', 'image/jpeg', 'image/gif', 'application/pdf'];
         if (in_array($_FILES['upload_bukti']['type'], $allowed_types)) {
             if (move_uploaded_file($file_tmp, $target_file)) {
-                $upload_bukti = $target_file;
+                $upload_bukti = $file_name; // Hanya menyimpan nama 
             } else {
                 echo "<script>alert('Gagal mengunggah file bukti.');</script>";
                 exit;
@@ -34,7 +34,7 @@ if (isset($_POST['add_transaksi'])) {
     $query = "INSERT INTO transaksi (id_user, id_pembayaran, status, id_materi, upload_bukti, created_at) 
               VALUES (?, ?, ?, ?, ?, NOW())";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("iiiss", $id_user, $id_pembayaran, $status, $id_materi, $upload_bukti); // Pastikan urutan dan jumlah parameter sesuai
+    $stmt->bind_param("iiiss", $id_user, $id_pembayaran, $status, $id_materi, $upload_bukti);
     if ($stmt->execute()) {
         echo "<script>alert('Transaksi berhasil ditambahkan dengan status: " . ($status === '0' ? 'Pending' : 'Berhasil') . "');</script>";
     } else {
@@ -46,9 +46,11 @@ if (isset($_POST['add_transaksi'])) {
 // Fungsi untuk menghapus transaksi
 if (isset($_POST['delete_transaksi'])) {
     $id_transaksi = $_POST['delete_transaksi'];
+
     $query = "DELETE FROM transaksi WHERE id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $id_transaksi);
+    
     if ($stmt->execute()) {
         echo "<script>alert('Transaksi berhasil dihapus.');</script>";
     } else {
@@ -64,7 +66,7 @@ if (isset($_POST['update_transaksi'])) {
     $id_pembayaran = $_POST['id_pembayaran'];
     $id_materi = $_POST['id_materi'];
     $status = $_POST['status'];
-    $upload_bukti = $_POST['existing_upload_bukti']; // Gunakan yang sudah ada jika tidak ada upload baru
+    $upload_bukti = $_POST['existing_upload_bukti'];
 
     // Proses pengunggahan file (jika ada)
     if (isset($_FILES['upload_bukti']) && $_FILES['upload_bukti']['error'] == 0) {
@@ -76,7 +78,7 @@ if (isset($_POST['update_transaksi'])) {
         $allowed_types = ['image/png', 'image/jpeg', 'image/gif', 'application/pdf'];
         if (in_array($_FILES['upload_bukti']['type'], $allowed_types)) {
             if (move_uploaded_file($file_tmp, $target_file)) {
-                $upload_bukti = $target_file; // Ganti dengan yang baru
+                $upload_bukti = $file_name; // Hanya menyimpan nama file
             } else {
                 echo "<script>alert('Gagal mengunggah file bukti.');</script>";
                 exit;
@@ -90,7 +92,7 @@ if (isset($_POST['update_transaksi'])) {
     // Menyimpan data yang diupdate ke dalam database
     $query = "UPDATE transaksi SET id_user = ?, id_pembayaran = ?, status = ?, id_materi = ?, upload_bukti = ? WHERE id = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("iiisi", $id_user, $id_pembayaran, $status, $id_materi, $upload_bukti, $id); // Pastikan urutan dan jumlah parameter sesuai
+    $stmt->bind_param("iiissi", $id_user, $id_pembayaran, $status, $id_materi, $upload_bukti, $id);
     if ($stmt->execute()) {
         echo "<script>alert('Transaksi berhasil diupdate.');</script>";
     } else {
@@ -118,9 +120,7 @@ $materis = $conn->query("SELECT * FROM materi");
             <div class="nk-block-head nk-block-head-sm">
                 <div class="nk-block-between">
                     <div class="nk-block-head-content">
-                        <div class="nk-block-des text-soft">
-                            <strong>Detail Transaksi</strong>
-                        </div>
+                        <h4 class="nk-block-title">Detail Transaksi</h4>
                     </div>
                     <div class="nk-block-head-content">
                         <div class="toggle-wrap nk-block-tools-toggle">
@@ -159,7 +159,8 @@ $materis = $conn->query("SELECT * FROM materi");
                     <tbody>
                         <?php
                         $id = 1;
-                        while ($row = $result->fetch_assoc()): ?>
+                        while ($row = $result->fetch_assoc()):
+                            ?>
                             <tr>
                                 <td><?= $id++ ?></td>
                                 <td><?= $row['user_name']; ?></td>
@@ -168,15 +169,82 @@ $materis = $conn->query("SELECT * FROM materi");
                                 <td><?= $row['status_materi']; ?></td>
                                 <td><?= $row['upload_bukti']; ?></td>
                                 <td>
-                                    <!-- Tombol Edit -->
                                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
-                                    <!-- Tombol Hapus -->
                                     <form method="POST" style="display:inline;">
                                         <input type="hidden" name="delete_transaksi" value="<?php echo $row['id']; ?>">
                                         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?');">Delete</button>
                                     </form>
                                 </td>
                             </tr>
+
+                            <!-- Modal Edit Transaksi -->
+                            <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form method="POST" enctype="multipart/form-data">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editModalLabel">Edit Transaksi</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                                <input type="hidden" name="existing_upload_bukti" value="<?php echo $row['upload_bukti']; ?>">
+                                                <div class="mb-3">
+                                                    <label for="id_user" class="form-label">User</label>
+                                                    <select name="id_user" id="id_user" class="form-control">
+                                                        <?php
+                                                        $users->data_seek(0); // Reset pointer
+                                                        while ($user = $users->fetch_assoc()): ?>
+                                                            <option value="<?= $user['id'] ?>" <?= $user['id'] == $row['id_user'] ? 'selected' : '' ?>>
+                                                                <?= $user['username'] ?>
+                                                            </option>
+                                                        <?php endwhile; ?>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="id_pembayaran" class="form-label">Pembayaran</label>
+                                                    <select name="id_pembayaran" id="id_pembayaran" class="form-control">
+                                                        <?php
+                                                        $pembayarans->data_seek(0);
+                                                        while ($pembayaran = $pembayarans->fetch_assoc()): ?>
+                                                            <option value="<?= $pembayaran['id'] ?>" <?= $pembayaran['id'] == $row['id_pembayaran'] ? 'selected' : '' ?>>
+                                                                <?= $pembayaran['harga'] ?>
+                                                            </option>
+                                                        <?php endwhile; ?>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="status" class="form-label">Status Pembayaran</label>
+                                                    <select name="status" id="status" class="form-control">
+                                                        <option value="0" <?= $row['status'] == '0' ? 'selected' : '' ?>>Pending</option>
+                                                        <option value="1" <?= $row['status'] == '1' ? 'selected' : '' ?>>Berhasil</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="id_materi" class="form-label">Materi</label>
+                                                    <select name="id_materi" id="id_materi" class="form-control">
+                                                        <?php
+                                                        $materis->data_seek(0);
+                                                        while ($materi = $materis->fetch_assoc()): ?>
+                                                            <option value="<?= $materi['id'] ?>" <?= $materi['id'] == $row['id_materi'] ? 'selected' : '' ?>>
+                                                                <?= $materi['status_materi'] ?>
+                                                            </option>
+                                                        <?php endwhile; ?>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="upload_bukti" class="form-label">Upload Bukti</label>
+                                                    <input type="file" name="upload_bukti" id="upload_bukti" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" name="update_transaksi" class="btn btn-primary">Simpan</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         <?php endwhile; ?>
                     </tbody>
                 </table>
@@ -184,7 +252,6 @@ $materis = $conn->query("SELECT * FROM materi");
         </div>
     </div>
 </div>
-
 <!-- Modal Add Transaksi -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -242,65 +309,3 @@ $materis = $conn->query("SELECT * FROM materi");
         </div>
     </div>
 </div>
-
-<!-- Modal Edit Transaksi -->
-<?php while ($row = $result->fetch_assoc()): ?>
-<div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="POST" enctype="multipart/form-data">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Edit Transaksi</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                    <input type="hidden" name="existing_upload_bukti" value="<?php echo $row['upload_bukti']; ?>">
-                    <div class="mb-3">
-                        <label for="id_user" class="form-label">User</label>
-                        <select name="id_user" id="id_user" class="form-control" required>
-                            <option value="">Pilih User</option>
-                            <?php while ($user = $users->fetch_assoc()): ?>
-                                <option value="<?= $user['id']; ?>" <?= ($user['id'] == $row['id_user']) ? 'selected' : ''; ?>><?= $user['username']; ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_pembayaran" class="form-label">Pembayaran</label>
-                        <select name="id_pembayaran" id="id_pembayaran" class="form-control" required>
-                            <option value="">Pilih Pembayaran</option>
-                            <?php while ($pembayaran = $pembayarans->fetch_assoc()): ?>
-                                <option value="<?= $pembayaran['id']; ?>" <?= ($pembayaran['id'] == $row['id_pembayaran']) ? 'selected' : ''; ?>><?= $pembayaran['nama']; ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="id_materi" class="form-label">Materi</label>
-                        <select name="id_materi" id="id_materi" class="form-control" required>
-                            <option value="">Pilih Materi</option>
-                            <?php while ($materi = $materis->fetch_assoc()): ?>
-                                <option value="<?= $materi['id']; ?>" <?= ($materi['id'] == $row['id_materi']) ? 'selected' : ''; ?>><?= $materi['judul']; ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
-                        <select name="status" id="status" class="form-control" required>
-                            <option value="0" <?= ($row['status'] == '0') ? 'selected' : ''; ?>>Pending</option>
-                            <option value="1" <?= ($row['status'] == '1') ? 'selected' : ''; ?>>Berhasil</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="upload_bukti" class="form-label">Upload Bukti (jika baru)</label>
-                        <input type="file" class="form-control" name="upload_bukti" id="upload_bukti">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" name="update_transaksi" class="btn btn-primary">Update</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<?php endwhile; ?>

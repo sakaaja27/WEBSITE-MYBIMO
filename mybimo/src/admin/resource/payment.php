@@ -127,16 +127,16 @@ $result = $conn->query("SELECT * FROM pembayaran");
                                                 <div class="modal-body">
                                                     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                                                     <div class="mb-3">
-                                                        <label for="nama_pembayaran" class="form-label">nama pembayaran</label>
+                                                        <label for="nama_pembayaran" class="form-label">Nama Pembayaran</label>
                                                         <input type="text" class="form-control" name="nama_pembayaran" value="<?php echo $row['nama_pembayaran']; ?>" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="harga" class="form-label">harga</label>
+                                                        <label for="harga" class="form-label">Harga</label>
                                                         <input type="number" class="form-control" name="harga" value="<?php echo $row['harga']; ?>" required>
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label for="nomor_bank" class="form-label">nomor_bank</label>
+                                                        <label for="nomor_bank" class="form-label">Nomor Bank</label>
                                                         <input type="number" class="form-control" name="nomor_bank" value="<?php echo $row['nomor_bank']; ?>" required>
                                                     </div>
                                                 </div>
@@ -171,15 +171,15 @@ $result = $conn->query("SELECT * FROM pembayaran");
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="nama_pembayaran" class="form-label">nama pembayaran</label>
+                        <label for="nama_pembayaran" class="form-label">Nama Pembayaran</label>
                         <input type="text" class="form-control" name="nama_pembayaran" required>
                     </div>
                     <div class="mb-3">
-                        <label for="harga" class="form-label">harga</label>
+                        <label for="harga" class="form-label">Harga</label>
                         <input type="number" class="form-control" name="harga" required>
                     </div>
                     <div class="mb-3">
-                        <label for="nomor_bank" class="form-label">nomor bank</label>
+                        <label for="nomor_bank" class="form-label">Nomor Bank</label>
                         <input type="number" class="form-control" name="nomor_bank" required>
                     </div>
                 </div>

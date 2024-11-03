@@ -16,9 +16,9 @@
                     <!-- Menu -->
                     <div class="nk-menu nk-menu-main">
                         <di class="nk-menu-item has-sub">
-                            <a href="#" class="">
+                            <a href="admin/index.php" class="">
                                 <div class="nk-block-head-content">
-                                    <h6 class="nk-block-title page-title">Selamat Datang Bramasta</h6>
+                                    <h6 class="nk-block-title page-title">Selamat Datang Admin</h6>
                                     <div class="nk-block-des text-soft">
                                         Di Website resmi <strong>My Bimo</strong>
                                     </div>
@@ -47,7 +47,7 @@
 
                                     </div>
                                     <div class="user-info">
-                                        <span class="lead-text">Saka</span>
+                                        <span class="lead-text">Admin</span>
                                     </div>
                                 </div>
                             </div>
