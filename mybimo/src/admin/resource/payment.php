@@ -99,7 +99,7 @@ $result = $conn->query("SELECT * FROM pembayaran");
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
+                            <?php
                             $id = 1;
                             while ($row = $result->fetch_assoc()): ?>
                                 <tr>

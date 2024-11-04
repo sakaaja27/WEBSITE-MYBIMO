@@ -152,7 +152,7 @@ if (isset($_POST['delete'])) {
                                         <?php if (!empty($row['upload_file'])): ?>
                                             <?php
                                             $file_name = basename($row['upload_file']);
-                                            $file_url = 'http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/storagesubmateri/' . urlencode($file_name);
+                                            $file_url = 'http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/storagesubmateri/' . rawurlencode($file_name);
                                             ?>
                                             <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file_name; ?></a>
                                         <?php else: ?>

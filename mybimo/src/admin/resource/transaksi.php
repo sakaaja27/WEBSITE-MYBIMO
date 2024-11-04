@@ -1,6 +1,13 @@
 <?php
 require_once '../koneksi/koneksi.php';
 
+$validImageExtension = ['jpg', 'png', 'jpeg'];
+$target_dir = "../getData/storagetransaksi/";
+
+if (!file_exists($target_dir)) {
+    mkdir($target_dir, 0777, true);
+}
+
 // Fungsi untuk menambahkan transaksi
 if (isset($_POST['add_transaksi'])) {
     $id_user = $_POST['id_user'];
@@ -9,52 +16,40 @@ if (isset($_POST['add_transaksi'])) {
     $status = $_POST['status'];
     $upload_bukti = '';
 
-    // Proses pengunggahan file
-    if (isset($_FILES['upload_bukti']) && $_FILES['upload_bukti']['error'] == 0) {
-        $file_tmp = $_FILES['upload_bukti']['tmp_name'];
-        $file_name = basename($_FILES['upload_bukti']['name']);
-        $target_dir = '../getData/storagetransaksi/';
-        $target_file = $target_dir . $file_name;
+    if ($_FILES["upload_bukti"]["error"] == 0) {
+        $fileName = $_FILES["upload_bukti"]["name"];
+        $fileSize = $_FILES["upload_bukti"]["size"];
+        $tmpName = $_FILES["upload_bukti"]["tmp_name"];
+        $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-        $allowed_types = ['image/png', 'image/jpeg', 'image/gif', 'application/pdf'];
-        if (in_array($_FILES['upload_bukti']['type'], $allowed_types)) {
-            if (move_uploaded_file($file_tmp, $target_file)) {
-                $upload_bukti = $file_name; // Hanya menyimpan nama 
+        if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
+            $newImageName = uniqid() . '.' . $imageExtension;
+            $targetFilePath = $target_dir . $newImageName;
+
+            if (move_uploaded_file($tmpName, $targetFilePath)) {
+                $upload_bukti = $newImageName;
             } else {
-                echo "<script>alert('Gagal mengunggah file bukti.');</script>";
+                echo "<script>alert('Gagal mengunggah gambar'); window.location.href='admin/index.php?transaksi';</script>";
                 exit;
             }
         } else {
-            echo "<script>alert('Tipe file tidak diperbolehkan untuk upload bukti.');</script>";
+            echo "<script>alert('Ekstensi gambar tidak valid atau ukuran terlalu besar'); window.location.href='admin/index.php?transaksi';</script>";
             exit;
         }
+    } else {
+        echo "<script>alert('Silakan unggah gambar'); window.location.href='admin/index.php?transaksi';</script>";
+        exit;
     }
 
-    // Menyimpan data ke dalam database
     $query = "INSERT INTO transaksi (id_user, id_pembayaran, status, id_materi, upload_bukti, created_at) 
               VALUES (?, ?, ?, ?, ?, NOW())";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("iiiss", $id_user, $id_pembayaran, $status, $id_materi, $upload_bukti);
-    if ($stmt->execute()) {
-        echo "<script>alert('Transaksi berhasil ditambahkan dengan status: " . ($status === '0' ? 'Pending' : 'Berhasil') . "');</script>";
-    } else {
-        echo "<script>alert('Gagal menambahkan transaksi: " . $stmt->error . "');</script>";
-    }
-    $stmt->close();
-}
 
-// Fungsi untuk menghapus transaksi
-if (isset($_POST['delete_transaksi'])) {
-    $id_transaksi = $_POST['delete_transaksi'];
-
-    $query = "DELETE FROM transaksi WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $id_transaksi);
-    
     if ($stmt->execute()) {
-        echo "<script>alert('Transaksi berhasil dihapus.');</script>";
+        echo "<script>alert('Transaksi berhasil ditambahkan!'); window.location.href='admin/index.php?transaksi';</script>";
     } else {
-        echo "<script>alert('Gagal menghapus transaksi: " . $stmt->error . "');</script>";
+        echo "<script>alert('Error: " . $stmt->error . "');</script>";
     }
     $stmt->close();
 }
@@ -66,37 +61,74 @@ if (isset($_POST['update_transaksi'])) {
     $id_pembayaran = $_POST['id_pembayaran'];
     $id_materi = $_POST['id_materi'];
     $status = $_POST['status'];
-    $upload_bukti = $_POST['existing_upload_bukti'];
+    $existing_upload_bukti = $_POST['existing_upload_bukti'];
 
-    // Proses pengunggahan file (jika ada)
-    if (isset($_FILES['upload_bukti']) && $_FILES['upload_bukti']['error'] == 0) {
-        $file_tmp = $_FILES['upload_bukti']['tmp_name'];
-        $file_name = basename($_FILES['upload_bukti']['name']);
-        $target_dir = '../getData/storagetransaksi/';
-        $target_file = $target_dir . $file_name;
+    $upload_bukti = $existing_upload_bukti; // Default to existing image
 
-        $allowed_types = ['image/png', 'image/jpeg', 'image/gif', 'application/pdf'];
-        if (in_array($_FILES['upload_bukti']['type'], $allowed_types)) {
-            if (move_uploaded_file($file_tmp, $target_file)) {
-                $upload_bukti = $file_name; // Hanya menyimpan nama file
+    if ($_FILES["upload_bukti"]["error"] == 0) {
+        $fileName = $_FILES["upload_bukti"]["name"];
+        $fileSize = $_FILES["upload_bukti"]["size"];
+        $tmpName = $_FILES["upload_bukti"]["tmp_name"];
+        $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+        if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
+            $newImageName = uniqid() . '.' . $imageExtension;
+            $targetFilePath = $target_dir . $newImageName;
+
+            if (move_uploaded_file($tmpName, $targetFilePath)) {
+                $upload_bukti = $newImageName;
+                // Delete old file if exists
+                if (file_exists($target_dir . $existing_upload_bukti)) {
+                    unlink($target_dir . $existing_upload_bukti);
+                }
             } else {
-                echo "<script>alert('Gagal mengunggah file bukti.');</script>";
+                echo "<script>alert('Gagal mengunggah gambar baru'); window.location.href='admin/index.php?transaksi';</script>";
                 exit;
             }
         } else {
-            echo "<script>alert('Tipe file tidak diperbolehkan untuk upload bukti.');</script>";
+            echo "<script>alert('Ekstensi gambar tidak valid atau ukuran terlalu besar'); window.location.href='admin/index.php?transaksi';</script>";
             exit;
         }
     }
 
-    // Menyimpan data yang diupdate ke dalam database
     $query = "UPDATE transaksi SET id_user = ?, id_pembayaran = ?, status = ?, id_materi = ?, upload_bukti = ? WHERE id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("iiissi", $id_user, $id_pembayaran, $status, $id_materi, $upload_bukti, $id);
+
     if ($stmt->execute()) {
-        echo "<script>alert('Transaksi berhasil diupdate.');</script>";
+        echo "<script>alert('Data berhasil diperbarui'); window.location.href='admin/index.php?transaksi';</script>";
     } else {
-        echo "<script>alert('Gagal mengupdate transaksi: " . $stmt->error . "');</script>";
+        echo "<script>alert('Error: " . $stmt->error . "');</script>";
+    }
+    $stmt->close();
+}
+
+// Fungsi untuk menghapus transaksi
+if (isset($_POST['delete_transaksi'])) {
+    $id = $_POST['delete_transaksi'];
+
+    // Get the filename of the image to delete
+    $query = "SELECT upload_bukti FROM transaksi WHERE id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $filename = $row['upload_bukti'];
+
+    // Delete the record from the database
+    $query = "DELETE FROM transaksi WHERE id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        // Delete the file if it exists
+        if ($filename && file_exists($target_dir . $filename)) {
+            unlink($target_dir . $filename);
+        }
+        echo "<script>alert('Transaksi berhasil dihapus'); window.location.href='admin/index.php?transaksi';</script>";
+    } else {
+        echo "<script>alert('Error: " . $stmt->error . "');</script>";
     }
     $stmt->close();
 }
@@ -110,7 +142,7 @@ $result = $conn->query("SELECT t.*, u.username AS user_name, u.email, p.harga, m
 
 $users = $conn->query("SELECT * FROM users");
 $pembayarans = $conn->query("SELECT * FROM pembayaran");
-$materis = $conn->query("SELECT * FROM materi");
+$materis = $conn->query("SELECT * FROM materi where st");
 ?>
 
 <!-- HTML untuk Tabel dan Modal -->
@@ -152,7 +184,7 @@ $materis = $conn->query("SELECT * FROM materi");
                             <th>Harga</th>
                             <th>Status Pembayaran</th>
                             <th>Status Materi</th>
-                            <th>Bukti</th>
+                            <th>Upload Bukti</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -160,14 +192,24 @@ $materis = $conn->query("SELECT * FROM materi");
                         <?php
                         $id = 1;
                         while ($row = $result->fetch_assoc()):
-                            ?>
+                        ?>
                             <tr>
                                 <td><?= $id++ ?></td>
-                                <td><?= $row['user_name']; ?></td>
-                                <td><?= $row['harga']; ?></td>
+                                <td><?= htmlspecialchars($row['user_name']); ?></td>
+                                <td><?= htmlspecialchars($row['harga']); ?></td>
                                 <td><?= $row['status'] == '0' ? '<span class="badge bg-warning">Pending</span>' : '<span class="badge bg-success">Berhasil</span>'; ?></td>
-                                <td><?= $row['status_materi']; ?></td>
-                                <td><?= $row['upload_bukti']; ?></td>
+                                <td>
+                                    <?php
+                                    if ($row['status_materi'] == '0') {
+                                        echo '<span class="badge bg-danger">Belum aktif</span>';
+                                    } elseif ($row['status_materi'] == '1') {
+                                        echo '<span class="badge bg-success">Aktif</span>';
+                                    } else {
+                                        echo '<span class="badge bg-warning">Pending</span>';
+                                    }
+                                    ?>
+                                </td>
+                                <td><?= htmlspecialchars($row['upload_bukti']); ?></td>
                                 <td>
                                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
                                     <form method="POST" style="display:inline;">
@@ -196,7 +238,7 @@ $materis = $conn->query("SELECT * FROM materi");
                                                         $users->data_seek(0); // Reset pointer
                                                         while ($user = $users->fetch_assoc()): ?>
                                                             <option value="<?= $user['id'] ?>" <?= $user['id'] == $row['id_user'] ? 'selected' : '' ?>>
-                                                                <?= $user['username'] ?>
+                                                                <?= htmlspecialchars($user['username']) ?>
                                                             </option>
                                                         <?php endwhile; ?>
                                                     </select>
@@ -208,7 +250,7 @@ $materis = $conn->query("SELECT * FROM materi");
                                                         $pembayarans->data_seek(0);
                                                         while ($pembayaran = $pembayarans->fetch_assoc()): ?>
                                                             <option value="<?= $pembayaran['id'] ?>" <?= $pembayaran['id'] == $row['id_pembayaran'] ? 'selected' : '' ?>>
-                                                                <?= $pembayaran['harga'] ?>
+                                                                <?= htmlspecialchars($pembayaran['harga']) ?>
                                                             </option>
                                                         <?php endwhile; ?>
                                                     </select>
@@ -222,12 +264,19 @@ $materis = $conn->query("SELECT * FROM materi");
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="id_materi" class="form-label">Materi</label>
-                                                    <select name="id_materi" id="id_materi" class="form-control">
+                                                    <select name="id_materi" id="id_materi" class="form-control" disabled>
                                                         <?php
                                                         $materis->data_seek(0);
                                                         while ($materi = $materis->fetch_assoc()): ?>
                                                             <option value="<?= $materi['id'] ?>" <?= $materi['id'] == $row['id_materi'] ? 'selected' : '' ?>>
-                                                                <?= $materi['status_materi'] ?>
+                                                                <?php
+                                                                if ($materi['status_materi'] == 0) {
+                                                                    echo "Belum Aktif";
+                                                                } else {
+                                                                    echo "Aktif ";
+                                                                }
+                                                                ?>
+
                                                             </option>
                                                         <?php endwhile; ?>
                                                     </select>
@@ -235,9 +284,11 @@ $materis = $conn->query("SELECT * FROM materi");
                                                 <div class="mb-3">
                                                     <label for="upload_bukti" class="form-label">Upload Bukti</label>
                                                     <input type="file" name="upload_bukti" id="upload_bukti" class="form-control">
+                                                    <small class="form-text text-muted">Biarkan kosong jika tidak ingin mengubah gambar.</small>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
+                                                <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> -->
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                                                 <button type="submit" name="update_transaksi" class="btn btn-primary">Simpan</button>
                                             </div>
@@ -252,6 +303,7 @@ $materis = $conn->query("SELECT * FROM materi");
         </div>
     </div>
 </div>
+
 <!-- Modal Add Transaksi -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -264,19 +316,25 @@ $materis = $conn->query("SELECT * FROM materi");
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="id_user" class="form-label">User</label>
-                        <select name="id_user" id="id_user" class="form-control" required>
-                            <option value="">Pilih User</option>
-                            <?php while ($user = $users->fetch_assoc()): ?>
-                                <option value="<?= $user['id']; ?>"><?= $user['username']; ?></option>
+                        <select name="id_user" id="id_user" class="form-control">
+                            <?php
+                            $users->data_seek(0); // Reset pointer
+                            while ($user = $users->fetch_assoc()): ?>
+                                <option value="<?= $user['id'] ?>">
+                                    <?= $user['username'] ?>
+                                </option>
                             <?php endwhile; ?>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="id_pembayaran" class="form-label">Pembayaran</label>
                         <select name="id_pembayaran" id="id_pembayaran" class="form-control" required>
-                            <option value="">Pilih Pembayaran</option>
-                            <?php while ($pembayaran = $pembayarans->fetch_assoc()): ?>
-                                <option value="<?= $pembayaran['id']; ?>"><?= $pembayaran['nama']; ?></option>
+                            <?php
+                            $pembayarans->data_seek(0); // Reset pointer
+                            while ($pembayaran = $pembayarans->fetch_assoc()): ?>
+                                <option value="<?= $pembayaran['id'] ?>">
+                                    <?= $pembayaran['nama_pembayaran'] ?>
+                                </option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -285,7 +343,7 @@ $materis = $conn->query("SELECT * FROM materi");
                         <select name="id_materi" id="id_materi" class="form-control" required>
                             <option value="">Pilih Materi</option>
                             <?php while ($materi = $materis->fetch_assoc()): ?>
-                                <option value="<?= $materi['id']; ?>"><?= $materi['judul']; ?></option>
+                                <option value="<?= $materi['id']; ?>"><?= htmlspecialchars($materi['id']); ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -302,10 +360,18 @@ $materis = $conn->query("SELECT * FROM materi");
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     <button type="submit" name="add_transaksi" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Script untuk Bootstrap (jika diperlukan) -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
