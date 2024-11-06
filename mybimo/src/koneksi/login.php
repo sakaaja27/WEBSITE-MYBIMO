@@ -3,7 +3,7 @@ include 'koneksi.php';
 $email = $_POST['email'];
 $password = $_POST['password'];
 
-// Ubah query untuk hanya mengambil data berdasarkan email dan
+// ini query untuk hanya mengambil data berdasarkan email
 $query = "SELECT * FROM users WHERE email = ? ";
 $stmt = mysqli_prepare($conn, $query);
 mysqli_stmt_bind_param($stmt, "s", $email);
@@ -26,7 +26,7 @@ if (!empty($email) && !empty($password)) {
                 "role" => $user['role'],
                 "upload_image" => $user['upload_image'],
                 "password" => $user['password']
-                // Tidak perlu mengirimkan password kembali ke client
+                // kirim data ke client
             ));
         } else {
             // Password tidak cocok

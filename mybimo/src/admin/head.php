@@ -11,4 +11,6 @@
     <!-- StyleSheets  -->
     <link rel="stylesheet" href="./assets/css/dashlite.css?ver=3.2.2">
     <link id="skin-default" rel="stylesheet" href="./assets/css/theme.css?ver=3.2.2">
+    <!-- Di bagian head HTML -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
 </head>

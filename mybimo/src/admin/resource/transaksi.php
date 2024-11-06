@@ -12,8 +12,7 @@ if (!file_exists($target_dir)) {
 if (isset($_POST['add_transaksi'])) {
     $id_user = $_POST['id_user'];
     $id_pembayaran = $_POST['id_pembayaran'];
-    $id_materi = $_POST['id_materi'];
-    $status = $_POST['status'];
+    $status = $_POST['status'] ?? '0';
     $upload_bukti = '';
 
     if ($_FILES["upload_bukti"]["error"] == 0) {
@@ -41,10 +40,10 @@ if (isset($_POST['add_transaksi'])) {
         exit;
     }
 
-    $query = "INSERT INTO transaksi (id_user, id_pembayaran, status, id_materi, upload_bukti, created_at) 
-              VALUES (?, ?, ?, ?, ?, NOW())";
+    $query = "INSERT INTO transaksi (id_user, id_pembayaran, status, upload_bukti, created_at) 
+              VALUES (?, ?, ?, ?, NOW())";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("iiiss", $id_user, $id_pembayaran, $status, $id_materi, $upload_bukti);
+    $stmt->bind_param("iiss", $id_user, $id_pembayaran, $status, $upload_bukti);
 
     if ($stmt->execute()) {
         echo "<script>alert('Transaksi berhasil ditambahkan!'); window.location.href='admin/index.php?transaksi';</script>";
@@ -54,52 +53,55 @@ if (isset($_POST['add_transaksi'])) {
     $stmt->close();
 }
 
-// Fungsi untuk mengupdate transaksi
+// Fungsi untuk mengupdate transaksi berhasil
 if (isset($_POST['update_transaksi'])) {
     $id = $_POST['id'];
-    $id_user = $_POST['id_user'];
-    $id_pembayaran = $_POST['id_pembayaran'];
-    $id_materi = $_POST['id_materi'];
-    $status = $_POST['status'];
-    $existing_upload_bukti = $_POST['existing_upload_bukti'];
+    $status = 1;
 
-    $upload_bukti = $existing_upload_bukti; // Default to existing image
+    try {
+        // Update transaksi
+        $query = "UPDATE transaksi SET status = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $status, $id);
 
-    if ($_FILES["upload_bukti"]["error"] == 0) {
-        $fileName = $_FILES["upload_bukti"]["name"];
-        $fileSize = $_FILES["upload_bukti"]["size"];
-        $tmpName = $_FILES["upload_bukti"]["tmp_name"];
-        $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-
-        if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
-            $newImageName = uniqid() . '.' . $imageExtension;
-            $targetFilePath = $target_dir . $newImageName;
-
-            if (move_uploaded_file($tmpName, $targetFilePath)) {
-                $upload_bukti = $newImageName;
-                // Delete old file if exists
-                if (file_exists($target_dir . $existing_upload_bukti)) {
-                    unlink($target_dir . $existing_upload_bukti);
-                }
-            } else {
-                echo "<script>alert('Gagal mengunggah gambar baru'); window.location.href='admin/index.php?transaksi';</script>";
-                exit;
-            }
+        if ($stmt->execute()) {
+            echo "<script>alert('Data berhasil dikonfirmasi'); window.location.href='admin/index.php?transaksi';</script>";
         } else {
-            echo "<script>alert('Ekstensi gambar tidak valid atau ukuran terlalu besar'); window.location.href='admin/index.php?transaksi';</script>";
-            exit;
+            throw new Exception("Gagal konfirmasi status transaksi");
         }
+    } catch (Exception $e) {
+        echo "<script>
+            alert('Error: " . $e->getMessage() . "');
+            window.location.href='index.php?page=transaksi';
+        </script>";
     }
 
-    $query = "UPDATE transaksi SET id_user = ?, id_pembayaran = ?, status = ?, id_materi = ?, upload_bukti = ? WHERE id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("iiissi", $id_user, $id_pembayaran, $status, $id_materi, $upload_bukti, $id);
+    $stmt->close();
+}
 
-    if ($stmt->execute()) {
-        echo "<script>alert('Data berhasil diperbarui'); window.location.href='admin/index.php?transaksi';</script>";
-    } else {
-        echo "<script>alert('Error: " . $stmt->error . "');</script>";
+// Fungsi untuk mengupdate transaksi tolak
+if (isset($_POST['tolak_transaksi'])) {
+    $id = $_POST['id'];
+    $status = 2;
+
+    try {
+        // Update transaksi
+        $query = "UPDATE transaksi SET status = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $status, $id);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('Data berhasil ditolak'); window.location.href='admin/index.php?transaksi';</script>";
+        } else {
+            throw new Exception("Gagal tolak status transaksi");
+        }
+    } catch (Exception $e) {
+        echo "<script>
+            alert('Error: " . $e->getMessage() . "');
+            window.location.href='index.php?page=transaksi';
+        </script>";
     }
+
     $stmt->close();
 }
 
@@ -134,15 +136,16 @@ if (isset($_POST['delete_transaksi'])) {
 }
 
 // Mengambil data transaksi
-$result = $conn->query("SELECT t.*, u.username AS user_name, u.email, p.harga, m.status_materi 
-                        FROM transaksi t 
-                        JOIN users u ON t.id_user = u.id 
-                        JOIN pembayaran p ON t.id_pembayaran = p.id 
-                        JOIN materi m ON t.id_materi = m.id");
-
+$result = $conn->query("select * from view_transaksi_lengkap");
 $users = $conn->query("SELECT * FROM users");
 $pembayarans = $conn->query("SELECT * FROM pembayaran");
-$materis = $conn->query("SELECT * FROM materi where st");
+
+// Di file config atau functions
+function base_url($path = '')
+{
+    $base_url = 'http://localhost/website%20mybimo/mybimo/src/'; // Sesuaikan dengan domain Anda
+    return $base_url . $path;
+}
 ?>
 
 <!-- HTML untuk Tabel dan Modal -->
@@ -181,116 +184,100 @@ $materis = $conn->query("SELECT * FROM materi where st");
                         <tr>
                             <th>ID</th>
                             <th>Nama User</th>
+                            <th>Email</th>
                             <th>Harga</th>
-                            <th>Status Pembayaran</th>
-                            <th>Status Materi</th>
-                            <th>Upload Bukti</th>
+                            <th>Status Transaksi</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $id = 1;
+                        $transaksi_id = 1;
                         while ($row = $result->fetch_assoc()):
                         ?>
                             <tr>
-                                <td><?= $id++ ?></td>
-                                <td><?= htmlspecialchars($row['user_name']); ?></td>
+                                <td><?= $transaksi_id++ ?></td>
+                                <td><?= htmlspecialchars($row['username']); ?></td>
+                                <td><?= htmlspecialchars($row['email']); ?></td>
                                 <td><?= htmlspecialchars($row['harga']); ?></td>
-                                <td><?= $row['status'] == '0' ? '<span class="badge bg-warning">Pending</span>' : '<span class="badge bg-success">Berhasil</span>'; ?></td>
+                                <td><?php
+                                    echo $row['status_transaksi'] == '0' ? '<span class="badge bg-warning">Pending</span>' : ($row['status_transaksi'] == '1' ? '<span class="badge bg-success">Konfirmasi</span>' : ($row['status_transaksi'] == '2' ? '<span class="badge bg-danger">Ditolak</span>' :
+                                        '<span class="badge bg-secondary">Tidak Diketahui</span>'));
+                                    ?></td>
+
                                 <td>
-                                    <?php
-                                    if ($row['status_materi'] == '0') {
-                                        echo '<span class="badge bg-danger">Belum aktif</span>';
-                                    } elseif ($row['status_materi'] == '1') {
-                                        echo '<span class="badge bg-success">Aktif</span>';
-                                    } else {
-                                        echo '<span class="badge bg-warning">Pending</span>';
-                                    }
-                                    ?>
-                                </td>
-                                <td><?= htmlspecialchars($row['upload_bukti']); ?></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
-                                    <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="delete_transaksi" value="<?php echo $row['id']; ?>">
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?');">Delete</button>
-                                    </form>
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>"><em class="icon ni ni-eye-fill"></em></button>
                                 </td>
                             </tr>
 
                             <!-- Modal Edit Transaksi -->
                             <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
+                                <div class="modal-dialog modal-dialog-scrollable">
                                     <div class="modal-content">
                                         <form method="POST" enctype="multipart/form-data">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="editModalLabel">Edit Transaksi</h5>
+                                                <h5 class="modal-title" id="editModalLabel">Bukti Transaksi</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
                                                 <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                                <input type="hidden" name="existing_upload_bukti" value="<?php echo $row['upload_bukti']; ?>">
-                                                <div class="mb-3">
-                                                    <label for="id_user" class="form-label">User</label>
-                                                    <select name="id_user" id="id_user" class="form-control">
-                                                        <?php
-                                                        $users->data_seek(0); // Reset pointer
-                                                        while ($user = $users->fetch_assoc()): ?>
-                                                            <option value="<?= $user['id'] ?>" <?= $user['id'] == $row['id_user'] ? 'selected' : '' ?>>
-                                                                <?= htmlspecialchars($user['username']) ?>
-                                                            </option>
-                                                        <?php endwhile; ?>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="id_pembayaran" class="form-label">Pembayaran</label>
-                                                    <select name="id_pembayaran" id="id_pembayaran" class="form-control">
-                                                        <?php
-                                                        $pembayarans->data_seek(0);
-                                                        while ($pembayaran = $pembayarans->fetch_assoc()): ?>
-                                                            <option value="<?= $pembayaran['id'] ?>" <?= $pembayaran['id'] == $row['id_pembayaran'] ? 'selected' : '' ?>>
-                                                                <?= htmlspecialchars($pembayaran['harga']) ?>
-                                                            </option>
-                                                        <?php endwhile; ?>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="status" class="form-label">Status Pembayaran</label>
-                                                    <select name="status" id="status" class="form-control">
-                                                        <option value="0" <?= $row['status'] == '0' ? 'selected' : '' ?>>Pending</option>
-                                                        <option value="1" <?= $row['status'] == '1' ? 'selected' : '' ?>>Berhasil</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3">
-                                                    <label for="id_materi" class="form-label">Materi</label>
-                                                    <select name="id_materi" id="id_materi" class="form-control" disabled>
-                                                        <?php
-                                                        $materis->data_seek(0);
-                                                        while ($materi = $materis->fetch_assoc()): ?>
-                                                            <option value="<?= $materi['id'] ?>" <?= $materi['id'] == $row['id_materi'] ? 'selected' : '' ?>>
+                                                <div class="row mt-3">
+                                                    <div class="col-md-6 ">
+                                                        <div class="mb-3 ms-2">
+                                                            <p class="form-label">Username : <?php echo $row['username']; ?></p>
+                                                        </div>
+                                                        <div class="mb-3 ms-2">
+                                                            <p class="form-label">Email : <?php echo $row['email']; ?></p>
+                                                        </div>
+                                                        <div class="mb-3 ms-2">
+                                                            <p class="form-label">Phone : <?php echo $row['phone']; ?></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 ">
+                                                        <div class="mb-3">
+                                                            <p class="form-label">Harga : <?php echo $row['harga']; ?></p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <p class="form-label">Status transaksi :
                                                                 <?php
-                                                                if ($materi['status_materi'] == 0) {
-                                                                    echo "Belum Aktif";
-                                                                } else {
-                                                                    echo "Aktif ";
-                                                                }
+                                                                echo $row['status_transaksi'] == '0' ? '<span class="badge bg-warning">Pending</span>' : ($row['status_transaksi'] == '1' ? '<span class="badge bg-success">Konfirmasi</span>' : ($row['status_transaksi'] == '2' ? '<span class="badge bg-danger">Ditolak</span>' :
+                                                                    '<span class="badge bg-secondary">Tidak Diketahui</span>'));
                                                                 ?>
-
-                                                            </option>
-                                                        <?php endwhile; ?>
-                                                    </select>
+                                                            </p>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label for="upload_bukti" class="form-label">Upload Bukti</label>
-                                                    <input type="file" name="upload_bukti" id="upload_bukti" class="form-control">
-                                                    <small class="form-text text-muted">Biarkan kosong jika tidak ingin mengubah gambar.</small>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3 ms-2">
+                                                        <label for="upload_bukti" class="form-label">Bukti Pembayaran</label>
+                                                        <div>
+                                                            <?php if ($row['upload_bukti'] != ''): ?>
+                                                                <!-- Tambahkan link yang membungkus gambar -->
+                                                                <a href="<?php echo base_url('getData/storagetransaksi/' . $row['upload_bukti']); ?>"
+                                                                    data-lightbox="bukti-pembayaran"
+                                                                    data-title="Bukti Pembayaran" alt="Bukti Pembayaran">
+                                                                    <img src="<?php echo base_url('getData/storagetransaksi/' . $row['upload_bukti']); ?>"
+                                                                        alt="Bukti Pembayaran"
+                                                                        width="100"
+                                                                        class="mt-2 mx-auto">
+                                                                </a>
+                                                            <?php else: ?>
+                                                                <p class="mt-2">Tidak ada bukti pembayaran</p>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+
                                             <div class="modal-footer">
                                                 <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> -->
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                                <button type="submit" name="update_transaksi" class="btn btn-primary">Simpan</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                                                <button type="submit" name="tolak_transaksi" class="btn btn-danger">Tolak</button>
+                                                <button type="submit" name="update_transaksi" class="btn btn-info">Konfirmasi</button>
+
                                             </div>
                                         </form>
                                     </div>
@@ -333,25 +320,16 @@ $materis = $conn->query("SELECT * FROM materi where st");
                             $pembayarans->data_seek(0); // Reset pointer
                             while ($pembayaran = $pembayarans->fetch_assoc()): ?>
                                 <option value="<?= $pembayaran['id'] ?>">
-                                    <?= $pembayaran['nama_pembayaran'] ?>
+                                    <?= $pembayaran['nama_pembayaran'] . ' - ' . $pembayaran['harga'] . '' ?>
                                 </option>
                             <?php endwhile; ?>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="id_materi" class="form-label">Materi</label>
-                        <select name="id_materi" id="id_materi" class="form-control" required>
-                            <option value="">Pilih Materi</option>
-                            <?php while ($materi = $materis->fetch_assoc()): ?>
-                                <option value="<?= $materi['id']; ?>"><?= htmlspecialchars($materi['id']); ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
-                        <select name="status" id="status" class="form-control" required>
+                        <select name="status" id="status" class="form-control" disabled>
                             <option value="0">Pending</option>
-                            <option value="1">Berhasil</option>
+                            <!-- <option value="1">Berhasil</option> -->
                         </select>
                     </div>
                     <div class="mb-3">

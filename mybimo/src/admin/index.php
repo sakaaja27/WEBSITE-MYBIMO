@@ -27,8 +27,8 @@
                     <?php include('./resource/soal.php') ?>
                 <?php elseif (isset($_GET['laporan'])): ?>
                     <?php include('./resource/laporan.php') ?>
-                    <?php elseif (isset($_GET['transaksi'])): ?>
-                        <?php include('./resource/transaksi.php') ?>
+                <?php elseif (isset($_GET['transaksi'])): ?>
+                    <?php include('./resource/transaksi.php') ?>
                 <?php else: ?>
                     <?php include('main.php') ?>
                 <?php endif; ?>
@@ -45,6 +45,9 @@
     <!-- select region modal -->
 
     <!-- JavaScript -->
+    <!-- Sebelum closing body tag -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>tr
     <script src="./assets/js/bundle.js?ver=3.2.2"></script>
     <script src="./assets/js/scripts.js?ver=3.2.2"></script>
     <script src="./assets/js/charts/gd-campaign.js?ver=3.2.2"></script>

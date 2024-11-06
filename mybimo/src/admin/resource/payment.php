@@ -78,8 +78,7 @@ $result = $conn->query("SELECT * FROM pembayaran");
                                             Add Data
                                         </button>
                                     </li>
-                                    <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em
-                                                class="icon ni ni-reports"></em><span>Reports</span></a></li>
+                                    
                                 </ul>
                             </div>
                         </div>

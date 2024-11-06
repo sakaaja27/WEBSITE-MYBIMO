@@ -4,7 +4,7 @@
     if (isset($_POST['id'])) {
         $id = $_POST['id'];
         // query untuk mengambil data sub materi berdasarkan id materi
-        $query = "SELECT * FROM sub_materi WHERE id_materi = ?";
+        $query = "SELECT * FROM view_submateri WHERE id_materi = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $id);
         $stmt->execute();
