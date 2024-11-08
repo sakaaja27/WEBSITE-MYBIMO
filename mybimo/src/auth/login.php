@@ -5,6 +5,7 @@ require '../koneksi/koneksi.php'; // Pastikan koneksi.php ada dan jalurnya benar
 $showAlert = false;
 
 if (isset($_POST['login'])) {
+    session_start();
     $username = $_POST['username'];
     $password = $_POST['password'];
 
@@ -19,6 +20,7 @@ if (isset($_POST['login'])) {
         // Mendapatkan data user yang login
         $row = mysqli_fetch_assoc($result);
         $role = $row['role']; // Ambil role dari database
+        $_SESSION["username"] = $username;
 
         // Arahkan ke halaman yang sesuai berdasarkan role
         if ($role == 0) {

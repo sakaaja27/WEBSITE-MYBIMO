@@ -65,12 +65,6 @@
                             <span class="nk-menu-text">Transaksi</span>
                         </a>
                     </li><!-- .nk-menu-item -->
-                    <li class="nk-menu-item">
-                        <a href="admin/index.php?laporan" class="nk-menu-link">
-                            <span class="nk-menu-icon"><em class="icon ni ni-report-profit"></em></span>
-                            <span class="nk-menu-text">Laporan</span>
-                        </a>
-                    </li><!-- .nk-menu-item -->
                 </ul><!-- .nk-menu -->
             </div><!-- .nk-sidebar-menu -->
         </div><!-- .nk-sidebar-content -->

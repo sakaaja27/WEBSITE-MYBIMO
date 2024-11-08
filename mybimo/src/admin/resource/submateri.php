@@ -1,22 +1,19 @@
 <?php
 require_once '../koneksi/koneksi.php';
 
+$upload_dir = "../getData/storagesubmateri/"; // direktori tempat untuk menyimpan filenya
 
-$upload_dir = "../getData/storagesubmateri/"; //direktori tempat untuk menyimpan filenya
-
-//Menampilkan file pdf dan word
+// Menampilkan file pdf dan word
 if (isset($_POST['file'])) {
     $file = $_POST['file'];
     $filepath = $upload_dir . $file;
     if (file_exists($filepath)) {
-        if (file_exists($filepath)) {
-            $file_exstension = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
-            $content_type = 'application/octet-stream';
-            if ($file_exstension == 'pdf') {
-                $content_type = "application/pdf";
-            } elseif (in_array($file_exstension, ['doc', 'docx'])) {
-                $content_type = 'application/msword';
-            }
+        $file_exstension = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
+        $content_type = 'application/octet-stream';
+        if ($file_exstension == 'pdf') {
+            $content_type = "application/pdf";
+        } elseif (in_array($file_exstension, ['doc', 'docx'])) {
+            $content_type = 'application/msword';
         }
 
         header('Content-Type: ' . $content_type);
@@ -30,6 +27,10 @@ if (isset($_POST['file'])) {
     }
 }
 
+// Ambil data materi
+$sql_materi = "SELECT id, judul_materi FROM materi";
+$result_materi = $conn->query($sql_materi);
+
 // Create (Tambah Data)
 if (isset($_POST['add_submateri'])) {
     $id_materi = $_POST['id_materi'];
@@ -37,10 +38,9 @@ if (isset($_POST['add_submateri'])) {
 
     $upload_file = '';
     if (isset($_FILES['upload_file']) && $_FILES['upload_file']['error'] == 0) {
-        $upload_file = basename($_FILES['upload_file']['name']);
-        move_uploaded_file($_FILES['upload_file']['tmp_name'], $upload_dir . $upload_file);
+        $upload_file = 'storagesubmateri/' .basename($_FILES['upload_file']['name']);
+        move_uploaded_file($_FILES['upload_file']['tmp_name'], $upload_dir . basename($_FILES['upload_file']['name']));
     }
-    
 
     $sql = "INSERT INTO sub_materi (id_materi, nama_sub, upload_file, created_at) VALUES (?, ?, ?, NOW())";
     $stmt = $conn->prepare($sql);
@@ -53,7 +53,8 @@ if (isset($_POST['add_submateri'])) {
     }
 }
 
-$sql = "SELECT * FROM sub_materi";
+// Ambil data sub materi dengan join untuk mendapatkan judul materi
+$sql = "SELECT sm.*, m.judul_materi FROM sub_materi sm JOIN materi m ON sm.id_materi = m.id";
 $result = $conn->query($sql);
 
 // Edit Data Sub Materi
@@ -65,9 +66,9 @@ if (isset($_POST['update_submateri'])) {
     // Untuk mengupload file
     $upload_file = '';
     if (isset($_FILES['upload_file']) && $_FILES['upload_file']['error'] == 0) {
-        $upload_file = basename($_FILES['upload_file']['name']);
-        move_uploaded_file($_FILES['upload_file']['tmp_name'], $upload_dir . $upload_file);
-    }    
+        $upload_file = 'storagesubmateri/' . basename($_FILES['upload_file']['name']);
+        move_uploaded_file($_FILES['upload_file']['tmp_name'], $upload_dir . basename($_FILES['upload_file']['name']));
+    }
 
     $sql = "UPDATE sub_materi SET id_materi=?, nama_sub=?, upload_file=? WHERE id=?";
     $stmt = $conn->prepare($sql);
@@ -80,7 +81,7 @@ if (isset($_POST['update_submateri'])) {
     }
 }
 
-// Menghaapus Data Sub 
+// Menghapus Data Sub 
 if (isset($_POST['delete'])) {
     $id = $_POST['delete'];
 
@@ -89,7 +90,7 @@ if (isset($_POST['delete'])) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Sub Materi berhasil dihapus'); window.location.href='admin/index.php?submateri</script>";
+        echo "<script>alert('Sub Materi berhasil dihapus'); window.location.href='admin/index.php?submateri';</script>";
     } else {
         echo "<script>alert('Gagal menghapus Sub Materi');</script>";
     }
@@ -109,18 +110,13 @@ if (isset($_POST['delete'])) {
                     </div><!-- .nk-block-head-content -->
                     <div class="nk-block-head-content">
                         <div class="toggle-wrap nk-block-tools-toggle">
-                            <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1"
-                                data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
+                            <a href="#" class="btn btn-icon btn-trigger toggle-expand me-n1" data-target="pageMenu"><em class="icon ni ni-more-v"></em></a>
                             <div class="toggle-expand-content" data-content="pageMenu">
                                 <ul class="nk-block-tools g-3">
                                     <li>
-                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#addModal"><em class="icon ni ni-plus"></em>
-                                            Add Data
-                                        </button>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><em class="icon ni ni-plus"></em> Add Data</button>
                                     </li>
-                                    <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em
-                                                class="icon ni ni-reports"></em><span>Reports</span></a></li>
+                                    <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em class="icon ni ni-reports"></em><span>Reports</span></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -133,7 +129,7 @@ if (isset($_POST['delete'])) {
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>ID Materi</th>
+                                <th>Materi</th>
                                 <th>Nama Sub Materi</th>
                                 <th>Upload File</th>
                                 <th>Created At</th>
@@ -145,44 +141,52 @@ if (isset($_POST['delete'])) {
                             $id = 1;
                             while ($row = $result->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?php echo $id++ ?></td>
-                                    <td><?php echo $row['id_materi']; ?></td>
+                                    <td><?php echo $id++; ?></td>
+                                    <td><?php echo $row['judul_materi']; ?></td>
                                     <td><?php echo $row['nama_sub']; ?></td>
                                     <td>
                                         <?php if (!empty($row['upload_file'])): ?>
                                             <?php
-                                            $file_name = basename($row['upload_file']);
-                                            $file_url = 'http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/storagesubmateri/' . rawurlencode($file_name);
+                                            $file_url = 'http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/' . $row['upload_file'];
                                             ?>
-                                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo $file_name; ?></a>
+                                            <a href="<?php echo $file_url; ?>" target="_blank"><?php echo basename($row['upload_file']); ?></a>
                                         <?php else: ?>
                                             No File
                                         <?php endif; ?>
                                     </td>
                                     <td><?php echo $row['created_at']; ?></td>
                                     <td>
-                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
-                                    <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="delete" value="<?php echo $row['id']; ?>">
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus transaksi ini?');">Delete</button>
-                                    </form>
-                                </td>
+                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
+                                        <form method="POST" style="display:inline;">
+                                            <input type="hidden" name="delete" value="<?php echo $row['id']; ?>">
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus sub materi ini?');">Delete</button>
+                                        </form>
+                                    </td>
                                 </tr>
 
-                                <!-- Modal Edit Materi -->
+                                <!-- Modal Edit Sub Materi -->
                                 <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1" aria-labelledby="editModalLabel<?php echo $row['id']; ?>" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <form method="POST" enctype="multipart/form-data">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="editModalLabel<?php echo $row['id']; ?>">Edit Materi</h5>
+                                                    <h5 class="modal-title" id="editModalLabel<?php echo $row['id']; ?>">Edit Sub Materi</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
                                                     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                                                     <div class="mb-3">
-                                                        <label for="id_materi" class="form-label">Id Materi</label>
-                                                        <input type="number" class="form-control" name="id_materi" value="<?php echo $row['id_materi']; ?>" required>
+                                                        <label for="id_materi" class="form-label">Materi</label>
+                                                        <select class="form-select" name="id_materi" required>
+                                                            <option value="">Pilih Materi</option>
+                                                            <?php
+                                                            $result_materi->data_seek(0);
+                                                            while ($materi = $result_materi->fetch_assoc()): ?>
+                                                                <option value="<?php echo $materi['id']; ?>" <?php echo ($materi['id'] == $row['id_materi']) ? 'selected' : ''; ?>>
+                                                                    <?php echo $materi['judul_materi']; ?>
+                                                                </option>
+                                                            <?php endwhile; ?>
+                                                        </select>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="nama_sub" class="form-label">Nama Sub Materi</label>
@@ -210,7 +214,7 @@ if (isset($_POST['delete'])) {
     </div>
 </div>
 
-<!-- Modal Tambah Pengguna -->
+<!-- Modal Tambah Sub Materi -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -221,8 +225,15 @@ if (isset($_POST['delete'])) {
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="id_materi" class="form-label">ID Materi</label>
-                        <input type="text" class="form-control" name="id_materi" required>
+                        <label for="id_materi" class="form-label">Materi</label>
+                        <select class="form-select" name="id_materi" required>
+                            <option value="">Pilih Materi</option>
+                            <?php
+                            $result_materi->data_seek(0);
+                            while ($materi = $result_materi->fetch_assoc()): ?>
+                                <option value="<?php echo $materi['id']; ?>"><?php echo $materi['judul_materi']; ?></option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="nama_sub" class="form-label">Nama Sub Materi</label>
@@ -241,6 +252,7 @@ if (isset($_POST['delete'])) {
         </div>
     </div>
 </div>
+
 </body>
 
 </html>

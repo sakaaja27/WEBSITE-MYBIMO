@@ -3,7 +3,7 @@ require_once '../koneksi/koneksi.php';
 
 $validImageExtension = ['jpg', 'jpeg', 'png'];
 
-$target_dir = "../getData/storage/";  //direktori untuk menyimpan gambar
+$target_dir = "../getData/storage/";  // direktori untuk menyimpan gambar
 if (!file_exists($target_dir)) {
     mkdir($target_dir, 0777, true);
 }
@@ -26,8 +26,8 @@ if (isset($_POST['add_user'])) {
 
         // Validate image
         if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
-            $newImageName = uniqid() . '.' . $imageExtension;
-            $targetFilePath = $target_dir . $newImageName; // Define the target file path
+            $newImageName = 'storage/' . uniqid() . '.' . $imageExtension; // Path relatif
+            $targetFilePath = $target_dir . basename($newImageName); // Define the target file path
 
             if (move_uploaded_file($tmpName, $targetFilePath)) {
                 // Insert user
@@ -36,7 +36,7 @@ if (isset($_POST['add_user'])) {
                 $stmt->bind_param("ssisss", $username, $email, $role, $phone, $password, $newImageName);
                 
                 if ($stmt->execute()) {
-                    echo "<script>alert('User berhasil ditambahkan!'); window.location.href='admin/index.php?users';</script>";
+                    echo "<script>alert('User  berhasil ditambahkan!'); window.location.href='admin/index.php?users';</script>";
                 } else {
                     echo "<script>alert('Error: " . $stmt->error . "');</script>";
                 }
@@ -50,29 +50,9 @@ if (isset($_POST['add_user'])) {
     } else {
         echo "<script>alert('Please upload an image');</script>";
     }
-    if ($newImageName) {
-        // Update dengan gambar baru
-        $query = "UPDATE users SET username = ?, email = ?, role = ?, upload_image = ?, phone = ? WHERE id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssissi", $username, $email, $role, $newImageName, $phone, $id);
-    } else {
-        // Update tanpa mengganti gambar
-        $query = "UPDATE users SET username = ?, email = ?, role = ?, phone = ? WHERE id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssisi", $username, $email, $role, $phone, $id);
-    }
-
-    if ($stmt->execute()) {
-        echo "<script>alert('Data berhasil diperbarui'); window.location.href='admin/index.php?users';</script>";
-    } else {
-        echo "<script>alert('Error: " . $stmt->error . "');</script>";
-    }
-    $stmt->close();
 }
 
-// End penambahan pengguna baru
-
-// Start Proses update pengguna
+// Proses update pengguna
 if (isset($_POST['update_user'])) {
     $id = $_POST['id'];
     $username = $_POST['username'];
@@ -82,15 +62,16 @@ if (isset($_POST['update_user'])) {
     $newImageName = "";
 
     if ($_FILES["upload_image"]["error"] == 0) {
-        // Same logic as above for the update process
+        // Get file information
         $fileName = $_FILES["upload_image"]["name"];
         $fileSize = $_FILES["upload_image"]["size"];
         $tmpName = $_FILES["upload_image"]["tmp_name"];
         $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
+        // Validate image
         if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
-            $newImageName = uniqid() . '.' . $imageExtension;
-            $targetFilePath = $target_dir . $newImageName; // Define the target file path
+            $newImageName = 'storage/' . uniqid() . '.' . $imageExtension; // Path relatif
+            $targetFilePath = $target_dir . basename($newImageName); // Define the target file path
 
             if (move_uploaded_file($tmpName, $targetFilePath)) {
                 // Update with new image
@@ -106,10 +87,19 @@ if (isset($_POST['update_user'])) {
             return;
         }
     } else {
-        // Update without changing the image
-        $query = "UPDATE users SET username = ?, email = ?, role = ?, phone = ? WHERE id = ?";
+        // Ambil nama gambar yang sudah ada di database
+        $query = "SELECT upload_image FROM users WHERE id = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssisi", $username, $email, $role, $phone, $id);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $existingImageName = $row['upload_image'];
+
+        // Update tanpa mengganti gambar
+        $query = "UPDATE users SET username = ?, email = ?, role = ?, upload_image = ?, phone = ? WHERE id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ssissi", $username, $email, $role, $existingImageName, $phone, $id);
     }
 
     // Execute the statement
@@ -120,7 +110,6 @@ if (isset($_POST['update_user'])) {
     }
     $stmt->close();
 }
-// End update pengguna
 
 // Proses hapus pengguna
 if (isset($_POST['delete_user_id'])) {
@@ -131,12 +120,11 @@ if (isset($_POST['delete_user_id'])) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('User berhasil dihapus!'); window.location.href='admin/index.php?users';</script>";
+        echo "<script>alert('User  berhasil dihapus!'); window.location.href='admin/index.php?users';</script>";
     } else {
-        echo "<script>alert('User Gagal dihapus!');</script>";
+        echo "<script>alert('User  gagal dihapus!');</script>";
     }
 }
-//End hapus pengguna
 
 // Mengambil data pengguna
 $result = $conn->query("SELECT * FROM users");
@@ -148,7 +136,6 @@ $result = $conn->query("SELECT * FROM users");
             <div class="nk-block-head nk-block-head-sm">
                 <div class="nk-block-between">
                     <div class="nk-block-head-content">
-                        <a href=""></a>
                         <div class="nk-block-des text-soft">
                             <strong>Data Users</strong>
                         </div>
@@ -188,28 +175,24 @@ $result = $conn->query("SELECT * FROM users");
                             while ($row = $result->fetch_assoc()): ?>
                                 <tr>
                                     <td><?php echo $id++; ?></td>
-                                    <td><?php echo $row['username']; ?></td>
-                                    <td><?php echo $row['email']; ?></td>
+                                    <td><?php echo htmlspecialchars($row['username']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['email']); ?></td>
                                     <td>
                                         <?php
                                         // Mengubah angka role menjadi nama
-                                        if ($row['role'] == 0) {
-                                            echo 'User';
-                                        } elseif ($row['role'] == 1) {
-                                            echo 'Admin';
-                                        }
+                                        echo $row['role'] == 0 ? 'User ' : 'Admin';
                                         ?>
                                     </td>
-                                    <td><?php echo $row['phone']; ?></td>
+                                    <td><?php echo htmlspecialchars($row['phone']); ?></td>
                                     <td>
-                                        <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/storage/<?php echo htmlspecialchars($row['upload_image']); ?>" alt="Icon" width="50" height="50">
+                                        <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['upload_image']); ?>" alt="Icon" width="50" height="50">
                                     </td>
                                     <td>
                                         <!-- Tombol Edit -->
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
                                         <!-- Form Hapus -->
                                         <form method="POST" style="display:inline;">
-                                            <input type="hidden" name="delete_user_id" value="<?php echo $row['id']; ?>">
+                                        <input type="hidden" name="delete_user_id" value="<?php echo $row['id']; ?>">
                                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?');">Delete</button>
                                         </form>
                                     </td>
@@ -228,22 +211,22 @@ $result = $conn->query("SELECT * FROM users");
                                                     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                                                     <div class="mb-3">
                                                         <label for="username" class="form-label">Username</label>
-                                                        <input type="text" class="form-control" name="username" value="<?php echo $row['username']; ?>" required>
+                                                        <input type="text" class="form-control" name="username" value="<?php echo htmlspecialchars($row['username']); ?>" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="email" class="form-label">Email</label>
-                                                        <input type="email" class="form-control" name="email" value="<?php echo $row['email']; ?>" required>
+                                                        <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($row['email']); ?>" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="role" class="form-label">Role</label>
                                                         <select name="role" class="form-select" required>
-                                                            <option value="0" <?php echo ($row['role'] == 0) ? 'selected' : ''; ?>>User</option>
+                                                            <option value="0" <?php echo ($row['role'] == 0) ? 'selected' : ''; ?>>User </option>
                                                             <option value="1" <?php echo ($row['role'] == 1) ? 'selected' : ''; ?>>Admin</option>
                                                         </select>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="phone" class="form-label">Phone</label>
-                                                        <input type="number" class="form-control" name="phone" value="<?php echo $row['phone']; ?>" required>
+                                                        <input type="text" class="form-control" name="phone" value="<?php echo htmlspecialchars($row['phone']); ?>" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="upload_image" class="form-label">Upload Image</label>
@@ -288,7 +271,7 @@ $result = $conn->query("SELECT * FROM users");
                     <div class="mb-3">
                         <label for="role" class="form-label">Role</label>
                         <select name="role" class="form-select" required>
-                            <option value="0">User</option>
+                            <option value="0">User </option>
                             <option value="1">Admin</option>
                         </select>
                     </div>
@@ -307,12 +290,16 @@ $result = $conn->query("SELECT * FROM users");
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" name="add_user" class="btn btn-primary">Tambah User</button>
+                    <button type="submit" name="add_user" class="btn btn-primary">Add User</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Script untuk Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+
+</body>
+</html>

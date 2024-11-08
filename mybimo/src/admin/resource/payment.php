@@ -7,12 +7,10 @@ if (isset($_POST['add_payment'])) {
     $harga = $_POST['harga'];
     $nomor_bank = $_POST['nomor_bank'];
 
-    // Modify the SQL to include created_at
     $sql = "INSERT INTO pembayaran (nama_pembayaran, harga, nomor_bank, created_at) VALUES (?, ?, ?, NOW())";
     $stmt = $conn->prepare($sql);
 
-    // Adjust the bind_param to match the number of placeholders
-    $stmt->bind_param("sss", $nama_pembayaran, $harga, $nomor_bank); // All three are strings
+    $stmt->bind_param("sss", $nama_pembayaran, $harga, $nomor_bank); 
 
     if ($stmt->execute()) {
         echo "<script>alert('User  berhasil ditambahkan!');</script>";
@@ -48,13 +46,14 @@ if (isset($_POST['delete_user_id'])) {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('User berhasil dihapus!');</script>"; // Pastikan untuk keluar setelah redirect
+        echo "<script>alert('User berhasil dihapus!');</script>"; 
     } else {
-        echo "<script>alert('User Gagal dihapus!');</script>"; // Pastikan untuk keluar setelah redirect
+        echo "<script>alert('User Gagal dihapus!');</script>"; 
     }
 }
 
 $result = $conn->query("SELECT * FROM pembayaran");
+$payment_count = $result -> num_rows; //untuk menghitung jumlah entri pembayaran
 ?>
 <div class="nk-content nk-content-fluid">
     <div class="container-xl wide-xl">
@@ -74,11 +73,12 @@ $result = $conn->query("SELECT * FROM pembayaran");
                                 <ul class="nk-block-tools g-3">
                                     <li>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#addModal"><em class="icon ni ni-plus"></em>
+                                            data-bs-target="#addModal" <?php echo($payment_count >= 1) ? 'disabled' : '';?>><em class="icon ni ni-plus"></em>
                                             Add Data
                                         </button>
+                                        <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em
+                                     class="icon ni ni-reports"></em><span>Reports</span></a></li>
                                     </li>
-                                    
                                 </ul>
                             </div>
                         </div>

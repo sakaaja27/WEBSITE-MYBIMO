@@ -5,128 +5,142 @@ if (!isset($conn) || !$conn) {
     die("Koneksi database gagal: " . (isset($conn) ? mysqli_connect_error() : "Variabel koneksi tidak terdefinisi"));
 }
 
-// Fungsi untuk mengambil jumlah dari tabel
-function getCount($conn, $table, $column = '*') {
+function getCount($conn, $table, $column = '*')
+{
     $query = "SELECT COUNT($column) AS total FROM $table";
     $result = $conn->query($query);
     return $result ? $result->fetch_assoc()['total'] : 0;
 }
 
-// Mengambil total users, subscribers, dan courses
-$totalUsers = getCount($conn, 'users');
-$totalSubscribers = getCount($conn, 'pembayaran');
-$totalCourses = getCount($conn, 'materi');
+function getPaymentsByMonth($conn)
+{
+    $query = "SELECT 
+              DATE_FORMAT(created_at, '%Y-%m') as bulan,
+              COUNT(*) as jumlah_transaksi,
+              SUM(harga) as total_pembayaran
+            FROM view_transaksi_lengkap
+            WHERE status_transaksi = 1
+            GROUP BY DATE_FORMAT(created_at, '%Y-%m')  
+            ORDER BY bulan";
 
-// Mengambil statistik pengguna berdasarkan bulan
-$userGrowthQuery = "SELECT MONTHNAME(created_at) AS month, COUNT(id) AS user_count 
-                    FROM materi 
-                    WHERE created_at IS NOT NULL
-                    GROUP BY MONTH(created_at), MONTHNAME(created_at)
-                    ORDER BY MONTH(created_at)";
-$resultUserGrowth = $conn->query($userGrowthQuery);
-
-$months = [];
-$userCounts = [];
-
-while ($row = $resultUserGrowth->fetch_assoc()) {
-    $months[] = $row['month'];
-    $userCounts[] = $row['user_count'];
+    return $conn->query($query);
 }
 
-// Statistik pembayaran
-$paymentStatsQuery = "SELECT 
-    DATE_FORMAT(created_at, '%Y-%m') as month,
-    SUM(harga) as total_amount
-    FROM pembayaran 
-    GROUP BY DATE_FORMAT(created_at, '%Y-%m')
-    ORDER BY month ASC
-    LIMIT 12";
-$resultPaymentStats = $conn->query($paymentStatsQuery);
+//Mengambil data total users,subscribers, dan materi
+$totalUsers = getCount($conn, 'users');
+$totalSubscribers = getCount($conn, 'transaksi', 'status = 1 ');
+$totalCourses = getCount($conn, 'materi');
+
+//Statistik pembayaran
+$paymentsStatsQuery = "SELECT DATE_FORMAT(created_at, '%Y-%m') as month,
+                        SUM(harga) as total_amount
+                        FROM pembayaran
+                        GROUP BY DATE_FORMAT (created_at, '%Y-%m')
+                        ORDER BY month ASC
+                        LIMIT 12";
+$resultPaymentStats = $conn->query($paymentsStatsQuery);
 
 $paymentMonths = [];
 $totalAmounts = [];
 
 while ($row = $resultPaymentStats->fetch_assoc()) {
-    $paymentMonths[] = date('M Y', strtotime($row['month'] . '-01'));
+    $paymentMothns[] = date('M Y', strtotime($row['month'] . '-01'));
     $totalAmounts[] = $row['total_amount'];
 }
 
-// Mengonversi data ke JSON untuk digunakan di JavaScript
-$monthsJson = json_encode($months);
-$userCountsJson = json_encode($userCounts);
-$paymentMonthsJson = json_encode($paymentMonths);
+//mengambil data pembayaran perbulan
+$payments = getPaymentsByMonth($conn);
+
+//menyiapkan data untuk grafik
+$labels = array();
+$data = array_fill(0, 12, 0);
+
+$months = [
+    '01' => 'Januari',
+    '02' => 'Februari',
+    '03' => 'Maret',
+    '04' => 'April',
+    '05' => 'Mei',
+    '06' => 'Juni',
+    '07' => 'Juli',
+    '08' => 'Agustus',
+    '09' => 'September',
+    '10' => 'Oktober',
+    '11' => 'November',
+    '12' => 'Desember'
+];
+
+//mengisi dta dari database
+while ($row = $payments->fetch_assoc()) {
+    $month_index = (int)date('m', strtotime($row['bulan'])) - 1;
+    $data[$month_index] = (int)$row['total_pembayaran'];
+}
+
+$labels = array_values($months);
+
+$paymentMothnsJson = json_encode($paymentMothns);
 $totalAmountsJson = json_encode($totalAmounts);
+$labelsJson = json_encode($labels);
+$dataJson = json_encode($data);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="path/to/your/css/file.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <div class="nk-content nk-content-fluid">
-        <div class="container-xl wide-xl">
-            <div class="nk-content-body">
-                <div class="nk-block">
-                    <div class="row g-gs">
-                        <?php
-                        $cardData = [
-                            ['title' => 'Users', 'count' => $totalUsers, 'label' => 'Users'],
-                            ['title' => 'Subscribers', 'count' => $totalSubscribers, 'label' => 'User Berlangganan'],
-                            ['title' => 'Courses', 'count' => $totalCourses, 'label' => 'Total Materi']
-                        ];
-
-                        foreach ($cardData as $card) {
-                            echo <<<HTML
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="card h-100 bg-primary">
-                                    <div class="nk-cmwg nk-cmwg1">
-                                        <div class="card-inner pt-3">
-                                            <div class="d-flex justify-content-between">
-                                                <div class="flex-item">
-                                                    <div class="text-white d-flex flex-wrap">
-                                                        <span class="fs-2 me-1">{$card['count']} {$card['title']}</span>
-                                                    </div>
-                                                    <h6 class="text-white">{$card['label']}</h6>
+<div class="nk-content nk-content-fluid">
+    <div class="container-xl wide-xl">
+        <div class="nk-content-body">
+            <div class="nk-block">
+                <div class="row g-gs">
+                    <?php
+                    $cardData = [
+                        ['title' => 'Users', 'count' => $totalUsers, 'label' => 'Users'],
+                        ['title' => 'Subscribers', 'count' => $totalSubscribers, 'label' => 'User Berlangganan'],
+                        ['title' => 'Courses', 'count' => $totalCourses, 'label' => 'Total Materi']
+                    ];
+                    foreach ($cardData as $card) {
+                        echo <<<HTML
+                        <div class="col-lg-4 col-sm-6">
+                            <div class="card h-1oo bg-primary">
+                                <div class="nk-cmwg nk-cmwg1">
+                                    <div class="card-inner pt-3">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="flex-item">
+                                                <div class="text-white d-flex flex-wrap">
+                                                    <span class="fs-2 me-1">{$card['count']} {$card['title']}</span>
                                                 </div>
+                                                <h6 class="text-white">{$card['label']}</h6>
                                             </div>
                                         </div>
-                                        <div class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom">
-                                            <div class="nk-cmwg1-ck">
-                                                <canvas class="campaign-line-chart-s1 rounded-bottom" id="runningCampaign"></canvas>
-                                            </div>
+                                    </div>
+                                    <div class="nk-ck-wrap mt-auto overflow-hidden rounded-bottom">
+                                        <div class="nk-cmwg1-ck">
+                                            <canvas class="campaign-line-chart-s1 rounded-bottom" id="runningCampaign"></canvas>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            HTML;
-                        }
-                        ?>
-                    </div>
+                        </div>
+                        HTML;
+                    }
+                    ?>
+                </div>
 
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title">Statistik Pengguna</h5>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="userChart" style="height: 300px;"></canvas>
-                                </div>
+                <div class="row mt-4">
+                    <!-- <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Total Pembayaran</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="revenueChart" style="height: 300px"></canvas>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="card-title">Total Pembayaran per Bulan</h5>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="revenueChart" style="height: 300px;"></canvas>
-                                </div>
+                    </div> -->
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Laporan Pembayaran Bulanan</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="monthlyPaymentChart" style=" width: 500px; height: 500px;"></canvas>
                             </div>
                         </div>
                     </div>
@@ -134,9 +148,12 @@ $totalAmountsJson = json_encode($totalAmounts);
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-    // Fungsi untuk membuat chart
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    //fungsi untuk membuar chart
     function createChart(ctx, type, labels, data, label, color, isCurrency = false) {
         return new Chart(ctx, {
             type: type,
@@ -186,13 +203,11 @@ $totalAmountsJson = json_encode($totalAmounts);
         });
     }
 
-    // Chart Pengguna
-    var userCtx = document.getElementById('userChart').getContext('2d');
-    createChart(userCtx, 'line', <?php echo $monthsJson; ?>, <?php echo $userCountsJson; ?>, 'Jumlah Pengguna', 'rgb(75, 192, 192)');
+    // //Chart total pembayaran
+    // var revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    // createChart(revenueCtx, 'line', <?php echo $paymentMothnsJson; ?>, <?php echo $totalAmountsJson; ?>, 'Total Pembayaran (Rp)', 'rgb(255, 99, 132)', true);
 
-    // Chart Total Pembayaran
-    var revenueCtx = document.getElementById('revenueChart').getContext('2d');
-    createChart(revenueCtx, 'line', <?php echo $paymentMonthsJson; ?>, <?php echo $totalAmountsJson; ?>, 'Total Pembayaran (Rp)', 'rgb(255, 99, 132)', true);
-    </script>
-</body>
-</html>
+    // chart laporan pembayaran Bulanan
+    var monthlyPaymentCtx = document.getElementById('monthlyPaymentChart').getContext('2d');
+    createChart(monthlyPaymentCtx, 'bar', <?php echo $labelsJson; ?>, <?php echo $dataJson; ?>, 'Pembayaran Bulanan', 'rgb(54, 162, 235)', true);
+</script>

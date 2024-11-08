@@ -3,7 +3,7 @@ require_once '../koneksi/koneksi.php';
 
 $validImageExtension = ['jpg', 'jpeg', 'png'];
 
-$target_dir = "../getData/storageImage/";  //direktori untuk menyimpan gambar
+$target_dir = "../getData/storageImage/";  // direktori untuk menyimpan gambar
 if (!file_exists($target_dir)) {
     mkdir($target_dir, 0777, true);
 }
@@ -11,7 +11,7 @@ if (!file_exists($target_dir)) {
 // Fungsi untuk menambahkan materi
 if (isset($_POST['add_materi'])) {
     $judul_materi = $_POST['judul_materi'];
-    $status_materi = 1; // Sesuaikan dengan default yang diinginkan
+    $status_materi = 1;
 
     if ($_FILES["foto_icon"]["error"] != 4) {
         $fileName = $_FILES["foto_icon"]["name"];
@@ -22,14 +22,13 @@ if (isset($_POST['add_materi'])) {
 
         if (!in_array($imageExtension, $validImageExtension)) {
             echo "<script>alert('Invalid Image Extension');</script>";
-        } 
-        elseif ($fileSize > 1000000) {
+        } elseif ($fileSize > 1000000) {
             echo "<script>alert('Image Size Is Too Large');</script>";
-        } 
-        else {
-            $newImageName = uniqid() . '.' . $imageExtension;
-            
-            if (move_uploaded_file($tmpName, $target_dir . $newImageName)) {
+        } else {
+            $newImageName = 'storageImage/' . uniqid() . '.' . $imageExtension; // Menyimpan path relatif
+
+            if (move_uploaded_file($tmpName, $target_dir . basename($newImageName))) {
+                // Simpan path relatif ke database
                 $sql = "INSERT INTO materi (judul_materi, foto_icon, created_at, status_materi) 
                         VALUES (?, ?, NOW(), ?)";
                 $stmt = $conn->prepare($sql);
@@ -37,8 +36,7 @@ if (isset($_POST['add_materi'])) {
 
                 if ($stmt->execute()) {
                     echo "<script>alert('Materi berhasil ditambahkan!'); window.location.href='admin/index.php?materi';</script>";
-                } 
-                else {  
+                } else {
                     echo "<script>alert('Gagal menambahkan materi');</script>";
                 }
                 $stmt->close();
@@ -62,8 +60,8 @@ if (isset($_POST['update_materi'])) {
         $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
         if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
-            $newImageName = uniqid() . '.' . $imageExtension;
-            move_uploaded_file($tmpName, $target_dir . $newImageName);
+            $newImageName = 'storageImage/' . uniqid() . '.' . $imageExtension; // Menyimpan path relatif
+            move_uploaded_file($tmpName, $target_dir . basename($newImageName));
         }
     }
 
@@ -71,8 +69,7 @@ if (isset($_POST['update_materi'])) {
         $query = "UPDATE materi SET judul_materi=?, foto_icon=?, status_materi=? WHERE id=?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("ssii", $judul_materi, $newImageName, $status_materi, $id);
-    } 
-    else {
+    } else {
         $query = "UPDATE materi SET judul_materi=?, status_materi=? WHERE id=?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("sii", $judul_materi, $status_materi, $id);
@@ -80,8 +77,7 @@ if (isset($_POST['update_materi'])) {
 
     if ($stmt->execute()) {
         echo "<script>alert('Materi berhasil diperbarui'); window.location.href='admin/index.php?materi';</script>";
-    } 
-    else {
+    } else {
         echo "<script>alert('Error: " . $stmt->error . "');</script>";
     }
     $stmt->close();
@@ -118,7 +114,6 @@ $result = $conn->query("SELECT * FROM materi");
                             </a>
                             <div class="toggle-expand-content" data-content="pageMenu">
                                 <ul class="nk-block-tools g-3">
-                                <ul class="nk-block-tools g-3">
                                     <li>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#addModal"><em class="icon ni ni-plus"></em>
@@ -127,7 +122,6 @@ $result = $conn->query("SELECT * FROM materi");
                                     </li>
                                     <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em
                                                 class="icon ni ni-reports"></em><span>Reports</span></a></li>
-                                </ul>
                                 </ul>
                             </div>
                         </div>
@@ -149,68 +143,69 @@ $result = $conn->query("SELECT * FROM materi");
                             </tr>
                         </thead>
                         <tbody>
-                            <?php 
+                            <?php
                             $id = 1;
                             while ($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo $id++ ?></td>
-                                <td><?php echo $row['judul_materi']; ?></td>
-                                <td>
-                                <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/storageImage/<?php echo htmlspecialchars($row['foto_icon']); ?>" alt="Icon" width="50" height="50">
-                                </td>
-                                <td><?php echo $row['status_materi']; ?></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" 
+                                <tr>
+                                    <td><?php echo $id++ ?></td>
+                                    <td><?php echo htmlspecialchars($row['judul_materi']); ?></td>
+                                    <td>
+                                        <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']); ?>" alt="Icon" width="50" height="50">
+                                    </td>
+                                    <td><?php echo $row['status_materi']; ?></td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
-                                    <form method="POST" style="display: inline;">
-                                        <input type="hidden" name="delete" value="<?php echo $row['id']; ?>">
-                                        <button type="submit" class="btn btn-danger btn-sm" 
+                                        <form method="POST" style="display: inline;">
+                                            <input type="hidden" name="delete" value="<?php echo $row['id']; ?>">
+                                            <button type="submit" class="btn btn-danger btn-sm"
                                                 onclick="return confirm('Apakah Anda yakin ingin menghapus materi ini?');">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
+                                        </form>
+                                    </td>
+                                </tr>
 
-                            <!-- Modal Edit -->
-                            <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <form method="POST" enctype="multipart/form-data">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Edit Materi</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                                <div class="mb-3">
-                                                    <label class="form-label">Judul Materi</label>
-                                                    <input type="text" class="form-control" name="judul_materi" 
-                                                           value="<?php echo $row['judul_materi']; ?>" required>
+                                <!-- Modal Edit -->
+                                <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <form method="POST" enctype="multipart/form-data">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Materi</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Foto Icon</label>
-                                                    <input type="file" class="form-control" name="foto_icon" 
-                                                           accept=".jpg,.jpeg,.png">
-                                                    <small>Biarkan kosong jika tidak ingin mengganti foto.</small>
-                                                    <div class="mt-2">
-                                                    <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/storageImage/<?php echo htmlspecialchars($row['foto_icon']); ?>" alt="Icon" width="50" height="50">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Judul Materi</label>
+                                                        <input type="text" class="form-control" name="judul_materi"
+                                                            value="<?php echo htmlspecialchars($row['judul_materi']); ?>" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Foto Icon</label>
+                                                        <input type="file" class="form-control" name="foto_icon"
+                                                            accept=".jpg,.jpeg,.png">
+                                                        <small>Biarkan kosong jika tidak ingin mengganti foto.</small>
+                                                        <div class="mt-2">
+                                                            <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']);
+                                                                                                                            ?>" alt="Icon" width="50" height="50">
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Status Materi</label>
+                                                        <input type="number" class="form-control" name="status_materi"
+                                                            value="<?php echo $row['status_materi']; ?>" required>
                                                     </div>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label">Status Materi</label>
-                                                    <input type="number" class="form-control" name="status_materi" 
-                                                           value="<?php echo $row['status_materi']; ?>" required>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" 
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" name="update_materi" 
+                                                    <button type="submit" name="update_materi"
                                                         class="btn btn-primary">Update</button>
-                                            </div>
-                                        </form>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             <?php endwhile; ?>
                         </tbody>
                     </table>
@@ -236,8 +231,8 @@ $result = $conn->query("SELECT * FROM materi");
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Foto Icon</label>
-                        <input type="file" class="form-control" name="foto_icon" 
-                               accept=".jpg,.jpeg,.png" required>
+                        <input type="file" class="form-control" name="foto_icon"
+                            accept=".jpg,.jpeg,.png" required>
                         <small class="text-muted">Format: JPG, JPEG, PNG (Max 1MB)</small>
                     </div>
                 </div>
@@ -252,3 +247,7 @@ $result = $conn->query("SELECT * FROM materi");
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+<?php require "./middlewares/auth.middleware.php"; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

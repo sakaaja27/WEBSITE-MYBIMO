@@ -143,7 +143,7 @@ $pembayarans = $conn->query("SELECT * FROM pembayaran");
 // Di file config atau functions
 function base_url($path = '')
 {
-    $base_url = 'http://localhost/website%20mybimo/mybimo/src/'; // Sesuaikan dengan domain Anda
+    $base_url = 'http://localhost/website-mybimo/mybimo/src/'; // Sesuaikan dengan domain Anda
     return $base_url . $path;
 }
 ?>
@@ -305,7 +305,7 @@ function base_url($path = '')
                         <label for="id_user" class="form-label">User</label>
                         <select name="id_user" id="id_user" class="form-control">
                             <?php
-                            $users->data_seek(0); // Reset pointer
+                            $users->data_seek(0); 
                             while ($user = $users->fetch_assoc()): ?>
                                 <option value="<?= $user['id'] ?>">
                                     <?= $user['username'] ?>
@@ -317,7 +317,7 @@ function base_url($path = '')
                         <label for="id_pembayaran" class="form-label">Pembayaran</label>
                         <select name="id_pembayaran" id="id_pembayaran" class="form-control" required>
                             <?php
-                            $pembayarans->data_seek(0); // Reset pointer
+                            $pembayarans->data_seek(0); 
                             while ($pembayaran = $pembayarans->fetch_assoc()): ?>
                                 <option value="<?= $pembayaran['id'] ?>">
                                     <?= $pembayaran['nama_pembayaran'] . ' - ' . $pembayaran['harga'] . '' ?>
