@@ -1,20 +1,28 @@
 <?php
+session_start();
 require '../koneksi/koneksi.php'; 
 
-$showEmailExistsAlert = false;
-$showSuccessAlert = false;
+$showEmailExistsAlert = isset($_SESSION['showEmailExistsAlert']) ? $_SESSION['showEmailExistsAlert'] : false;
+$showSuccessAlert = isset($_SESSION['showSuccessAlert']) ? $_SESSION['showSuccessAlert'] : false;
+
+// Hapus session setelah digunakan agar tidak muncul berulang
+unset($_SESSION['showEmailExistsAlert']);
+unset($_SESSION['showSuccessAlert']);
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
     }
 
+    // Ambil data dari form
     $username = $_POST['username'];
     $email = $_POST['email'];
     $phone = $_POST['phone'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $role = 0;
 
+    // Validasi input
     if (empty($username) || empty($email) || empty($phone) || empty($_POST['password'])) {
         echo "<script>
             alert('Please fill in all fields.');
@@ -30,14 +38,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $email_check_stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $showEmailExistsAlert = true;
+      $_SESSION['showEmailExistsAlert'] = true; // Set session untuk alert email sudah ada
+      header("Location: ../auth/register.php");
+      exit();
     } else {
         // Siapkan query untuk memasukkan data baru
         $stmt = $conn->prepare("INSERT INTO users (username, email, phone, password, role) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssi", $username, $email, $phone, $password, $role);
 
         if ($stmt->execute()) {
-            $showSuccessAlert = true;
+          $_SESSION['showSuccessAlert'] = true; // Set session untuk alert sukses
+          header("Location: ../auth/register.php");
+          exit();
         } else {
             echo "<script>
                 alert('Error inserting data: " . $stmt->error . "');

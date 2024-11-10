@@ -1,46 +1,67 @@
 <?php
+session_start();
 require '../koneksi/koneksi.php'; // Pastikan koneksi.php ada dan jalurnya benar
 
 // Initialize a variable to control the alert
-$showAlert = false;
+$showAlert = isset($_SESSION['showAlert']) && $_SESSION['showAlert'];
+unset($_SESSION['showAlert']); // Hapus session setelah digunakan
 
 if (isset($_POST['login'])) {
-    session_start();
-    $username = $_POST['username'];
+    $usernameOrEmail = $_POST['username'];
     $password = $_POST['password'];
 
-    // Query untuk memeriksa username dan password
-    $query_sql = "SELECT * FROM users WHERE username = ?";
-    $stmt = $conn->prepare($query_sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Gunakan prepared statement untuk keamanan
+    $stmt = mysqli_prepare($conn, "SELECT * FROM users WHERE username = ? OR email = ?");
+    mysqli_stmt_bind_param($stmt, "ss", $usernameOrEmail, $usernameOrEmail);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-    if (mysqli_num_rows($result) > 0) {
-        // Mendapatkan data user yang login
+    if (mysqli_num_rows($result) === 1) {
         $row = mysqli_fetch_assoc($result);
-        $role = $row['role']; // Ambil role dari database
-        $_SESSION["username"] = $username;
 
-        // Arahkan ke halaman yang sesuai berdasarkan role
-        if ($role == 0) {
-            header("Location: ../dashboard.php"); // Redirect ke halaman dashboard user
-            exit();
-        } elseif ($role == 1) {
-            header("Location: ../admin/index.php"); // Redirect ke halaman dashboard admin
-            exit();
-        } elseif ($role == 2) {
-            header("Location: ../admin/index.php"); // Redirect ke halaman dashboard super admin
-            exit();
+        // Verifikasi password sesuai dengan role
+        if ($row['role'] == 0) {
+            // Role 0 (User) menggunakan password terenkripsi
+            if (password_verify($password, $row["password"])) {
+                // Password benar
+                $_SESSION['id'] = $row['id'];
+                $_SESSION['username'] = $row['username'];
+                $_SESSION['role'] = $row['role'];
+                header("Location: ../dashboard.php");
+                exit();
+            }
         } else {
-            echo "<center><h1>Role tidak dikenali.</h1></center>";
+            // Role 1 dan 2 menggunakan password biasa (plain text)
+            if ($password == $row["password"]) {
+                // Password benar
+                $_SESSION['id'] = $row['id'];
+                $_SESSION['username'] = $row['username'];
+                $_SESSION['role'] = $row['role'];
+
+                // Arahkan sesuai role
+                if ($row['role'] == 1) {
+                    header("Location: ../admin/index.php");
+                } else if ($row['role'] == 2) {
+                    header("Location: ../superadmin/index.php");
+                }
+                exit();
+            }
         }
+
+        // Jika password salah
+        $_SESSION['showAlert'] = true;
+        header("Location: ../auth/login.php");
+        exit();
     } else {
-        // Set the alert variable to true
-        $showAlert = true;
+        // Username atau email tidak ditemukan
+        $_SESSION['showAlert'] = true;
+        header("Location: ../auth/login.php");
+        exit();
     }
 }
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -96,6 +117,6 @@ if (isset($_POST['login'])) {
                 confirmButtonColor: "#1B78F2"
             });
         <?php endif; ?>
-    </script>
+    </script> 
 </body>
 </html>
