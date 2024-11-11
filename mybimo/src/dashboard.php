@@ -47,14 +47,52 @@
 
     </section><!-- /First Section -->
 
-    <!-- Button Box -->
-    <div class="button-box">
-      <button type="button"><img src="assets-frontend/img/buttondashboard/button1.png" alt="Button 1"></button>
-      <button type="button"><img src="assets-frontend/img/buttondashboard/button2.png" alt="Button 2"></button>
-      <button type="button"><img src="assets-frontend/img/buttondashboard/button3.png" alt="Button 3"></button>
-      <button type="button"><img src="assets-frontend/img/buttondashboard/button4.png" alt="Button 4"></button>
-      <button type="button"><img src="assets-frontend/img/buttondashboard/button5.png" alt="Button 5"></button>
+   <!-- Button Box -->
+<div class="button-box">
+  <button type="button" data-toggle="modal" data-target="#imageModal">
+    <img src="assets-frontend/img/buttondashboard/button1.png" alt="Button 1">
+  </button>
+  <button type="button" data-toggle="modal" data-target="#imageModal">
+    <img src="assets-frontend/img/buttondashboard/button2.png" alt="Button 2">
+  </button>
+  <button type="button" data-toggle="modal" data-target="#imageModal">
+    <img src="assets-frontend/img/buttondashboard/button3.png" alt="Button 3">
+  </button>
+  <button type="button" data-toggle="modal" data-target="#imageModal">
+    <img src="assets-frontend/img/buttondashboard/button4.png" alt="Button 4">
+  </button>
+  <button type="button" data-toggle="modal" data-target="#imageModal">
+    <img src="assets-frontend/img/buttondashboard/button5.png" alt="Button 5">
+  </button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageModalLabel">Download Aplikasi</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <!-- Gambar dalam Pop-up -->
+        <img src="assets-frontend/img/popup.png" alt="Aplikasi Preview" class="img-fluid">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+        <a href="link-to-your-app-download" class="btn btn-primary" download>Download Aplikasi</a>
+      </div>
     </div>
+  </div>
+</div>
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
     <!-- Second Section -->
     <section id="second">
       <div>
@@ -75,7 +113,7 @@
                   <i class="fa fa-star" aria-hidden="true"></i> Daily new words and quizzes.<br>
                   <i class="fa fa-star" aria-hidden="true"></i> Boosts speaking and comprehension skills.
                 </p>
-                <a href="#" class="btn btn-orange">See Details</a>
+                <a href="#" class="btn btn-orange" data-toggle="modal" data-target="#imageModal">See Details</a>
               </div>
             </div>
             <div class="card-footer">
@@ -95,7 +133,7 @@
             <i class="fa fa-star" aria-hidden="true"></i> Easy-to-understand explanations.<br>
             <i class="fa fa-star" aria-hidden="true"></i> Practical exercises for all levels.
           </p>
-          <a href="#" class="btn btn-orange">See Details</a>
+          <a href="#" class="btn btn-orange" data-toggle="modal" data-target="#imageModal">See Details</a>
         </div>
         </div>
         <div class="card-footer">
@@ -115,7 +153,7 @@
             <i class="fa fa-star" aria-hidden="true"></i> Exercises tailored for all levels.<br>
             <i class="fa fa-star" aria-hidden="true"></i> Boosts listening speed and accuracy.
           </p>
-          <a href="#" class="btn btn-orange">See Details</a>
+          <a href="#" class="btn btn-orange" data-toggle="modal" data-target="#imageModal">See Details</a>
           </div>
         </div>
         <div class="card-footer">
@@ -135,7 +173,7 @@
             <i class="fa fa-star" aria-hidden="true"></i> Enhance speed and comprehension.<br>
             <i class="fa fa-star" aria-hidden="true"></i> Learn contextual understanding effectively.
           </p>
-          <a href="#" class="btn btn-orange">See Details</a>
+          <a href="#" class="btn btn-orange" data-toggle="modal" data-target="#imageModal">See Details</a>
           </div>
         </div>
         <div class="card-footer">
@@ -155,7 +193,7 @@
             <i class="fa fa-star" aria-hidden="true"></i> Structured practice for all types of pronouns.<br>
             <i class="fa fa-star" aria-hidden="true"></i> Boosts sentence accuracy and fluency.
           </p>
-          <a href="#" class="btn btn-orange">See Details</a>
+          <a href="#" class="btn btn-orange" data-toggle="modal" data-target="#imageModal">See Details</a>
           </div>
         </div>
         <div class="card-footer">
@@ -199,6 +237,15 @@
     </div>
   </div>
 </section><!-- /Third Section -->
+
+<section><!-- Fourth Section -->
+
+<div class="card-container">
+        <img src="assets-frontend/img/card2/card1.png" alt="Card Image" class="card-image">
+        <a href="#" class="button-overlay">Lihat Detail</a>
+    </div>
+
+</section><!-- /Fourth Section -->  
 
 <!-- Link Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
