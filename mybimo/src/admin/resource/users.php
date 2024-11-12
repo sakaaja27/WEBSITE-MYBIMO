@@ -27,6 +27,13 @@ if (isset($_POST['add_user'])) {
     if ($emailCheckResult->num_rows > 0) {
         echo "<script>alert('Email sudah terdaftar! Silahkan gunakan email lain.');</script>";
     } else {
+        $usernameCheckQuery = "SELECT * FROM users WHERE username = ?";
+        $usernameCheckStmt = $conn->prepare($usernameCheckQuery);
+        $usernameCheckStmt -> bind_param("s", $username);
+        $usernameCheckStmt -> execute();
+        $usernameCheckResult = $usernameCheckStmt -> get_result();
+
+        echo "<script>alert('Username sudah terdaftar! Silahkan gunakan username lain.');</script>";
         if ($_FILES["upload_image"]["error"] == 0) {
             $fileName = $_FILES["upload_image"]["name"];
             $fileSize = $_FILES["upload_image"]["size"];
@@ -131,7 +138,7 @@ if (isset($_POST['delete_user_id'])) {
 }
 
 // Mengambil data pengguna
-$result = $conn->query("SELECT * FROM users");
+$result = $conn->query("SELECT * FROM users ORDER BY id DESC");
 ?>
 
 <div class="nk-content nk-content-fluid">
