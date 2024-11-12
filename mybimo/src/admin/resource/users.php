@@ -9,6 +9,7 @@ if (!file_exists($target_dir)) {
 }
 
 // Proses penambahan pengguna baru
+// Proses penambahan pengguna baru
 if (isset($_POST['add_user'])) {
     $username = $_POST['username'];
     $email = $_POST['email'];
@@ -17,39 +18,47 @@ if (isset($_POST['add_user'])) {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $newImageName = "";
 
-    if ($_FILES["upload_image"]["error"] == 0) {
-        // Get file information
-        $fileName = $_FILES["upload_image"]["name"];
-        $fileSize = $_FILES["upload_image"]["size"];
-        $tmpName = $_FILES["upload_image"]["tmp_name"];
-        $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    $emailCheckQuery = "SELECT * FROM users WHERE email = ?";
+    $emailCheckStmt = $conn->prepare($emailCheckQuery);
+    $emailCheckStmt->bind_param("s", $email);
+    $emailCheckStmt->execute();
+    $emailCheckResult = $emailCheckStmt->get_result();
 
-        // Validate image
-        if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
-            $newImageName = 'storage/' . uniqid() . '.' . $imageExtension; // Path relatif
-            $targetFilePath = $target_dir . basename($newImageName); // Define the target file path
+    if ($emailCheckResult->num_rows > 0) {
+        echo "<script>alert('Email sudah terdaftar! Silahkan gunakan email lain.');</script>";
+    } else {
+        if ($_FILES["upload_image"]["error"] == 0) {
+            $fileName = $_FILES["upload_image"]["name"];
+            $fileSize = $_FILES["upload_image"]["size"];
+            $tmpName = $_FILES["upload_image"]["tmp_name"];
+            $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-            if (move_uploaded_file($tmpName, $targetFilePath)) {
-                // Insert user
-                $query = "INSERT INTO users (username, email, role, phone, password, upload_image) VALUES (?, ?, ?, ?, ?, ?)";
-                $stmt = $conn->prepare($query);
-                $stmt->bind_param("ssisss", $username, $email, $role, $phone, $password, $newImageName);
-                
-                if ($stmt->execute()) {
-                    echo "<script>alert('User  berhasil ditambahkan!'); window.location.href='admin/index.php?users';</script>";
+            if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
+                $newImageName = 'storage/' . uniqid() . '.' . $imageExtension; 
+                $targetFilePath = $target_dir . basename($newImageName); 
+
+                if (move_uploaded_file($tmpName, $targetFilePath)) {
+                    $query = "INSERT INTO users (username, email, role, phone, password, upload_image) VALUES (?, ?, ?, ?, ?, ?)";
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("ssisss", $username, $email, $role, $phone, $password, $newImageName);
+
+                    if ($stmt->execute()) {
+                        echo "<script>alert('User  berhasil ditambahkan!'); window.location.href='admin/index.php?users';</script>";
+                    } else {
+                        echo "<script>alert('Error: " . $stmt->error . "');</script>";
+                    }
+                    $stmt->close();
                 } else {
-                    echo "<script>alert('Error: " . $stmt->error . "');</script>";
+                    echo "<script>alert('Failed to upload image');</script>";
                 }
-                $stmt->close();
             } else {
-                echo "<script>alert('Failed to upload image');</script>";
+                echo "<script>alert('Invalid image extension or size too large');</script>";
             }
         } else {
-            echo "<script>alert('Invalid image extension or size too large');</script>";
+            echo "<script>alert('Please upload an image');</script>";
         }
-    } else {
-        echo "<script>alert('Please upload an image');</script>";
     }
+    $emailCheckStmt->close();
 }
 
 // Proses update pengguna
@@ -62,19 +71,16 @@ if (isset($_POST['update_user'])) {
     $newImageName = "";
 
     if ($_FILES["upload_image"]["error"] == 0) {
-        // Get file information
         $fileName = $_FILES["upload_image"]["name"];
         $fileSize = $_FILES["upload_image"]["size"];
         $tmpName = $_FILES["upload_image"]["tmp_name"];
         $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-        // Validate image
         if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
             $newImageName = 'storage/' . uniqid() . '.' . $imageExtension; // Path relatif
             $targetFilePath = $target_dir . basename($newImageName); // Define the target file path
 
             if (move_uploaded_file($tmpName, $targetFilePath)) {
-                // Update with new image
                 $query = "UPDATE users SET username = ?, email = ?, role = ?, upload_image = ?, phone = ? WHERE id = ?";
                 $stmt = $conn->prepare($query);
                 $stmt->bind_param("ssissi", $username, $email, $role, $newImageName, $phone, $id);
@@ -87,7 +93,6 @@ if (isset($_POST['update_user'])) {
             return;
         }
     } else {
-        // Ambil nama gambar yang sudah ada di database
         $query = "SELECT upload_image FROM users WHERE id = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("i", $id);
@@ -102,7 +107,6 @@ if (isset($_POST['update_user'])) {
         $stmt->bind_param("ssissi", $username, $email, $role, $existingImageName, $phone, $id);
     }
 
-    // Execute the statement
     if ($stmt->execute()) {
         echo "<script>alert('Data berhasil diperbarui'); window.location.href='admin/index.php?users';</script>";
     } else {
@@ -171,7 +175,7 @@ $result = $conn->query("SELECT * FROM users");
                         </thead>
                         <tbody>
                             <?php
-                            $id = 1; // Inisialisasi ID untuk penomoran
+                            $id = 1; 
                             while ($row = $result->fetch_assoc()): ?>
                                 <tr>
                                     <td><?php echo $id++; ?></td>
@@ -179,20 +183,23 @@ $result = $conn->query("SELECT * FROM users");
                                     <td><?php echo htmlspecialchars($row['email']); ?></td>
                                     <td>
                                         <?php
-                                        // Mengubah angka role menjadi nama
                                         echo $row['role'] == 0 ? 'User ' : 'Admin';
                                         ?>
                                     </td>
                                     <td><?php echo htmlspecialchars($row['phone']); ?></td>
                                     <td>
-                                        <img src="http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['upload_image']); ?> " alt="file foto rusak" width="50" height="50">
+                                        <?php
+                                        echo !empty($row['upload_image'])
+                                            ? '<img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/' . htmlspecialchars($row['upload_image']) . '" alt="User  Image" width="50" height="50">'
+                                            : 'Tidak ada foto';
+                                        ?>
                                     </td>
                                     <td>
                                         <!-- Tombol Edit -->
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
                                         <!-- Form Hapus -->
                                         <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="delete_user_id" value="<?php echo $row['id']; ?>">
+                                            <input type="hidden" name="delete_user_id" value="<?php echo $row['id']; ?>">
                                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?');">Delete</button>
                                         </form>
                                     </td>
@@ -302,4 +309,5 @@ $result = $conn->query("SELECT * FROM users");
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 
 </body>
+
 </html>
