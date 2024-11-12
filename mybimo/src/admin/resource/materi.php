@@ -138,7 +138,7 @@ $result = $conn->query("SELECT * FROM materi");
                                 <th>ID</th>
                                 <th>Judul Materi</th>
                                 <th>Foto Icon</th>
-                                <th>Status Materi</th>
+                                <!-- <th>Status Materi</th> -->
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -150,9 +150,9 @@ $result = $conn->query("SELECT * FROM materi");
                                     <td><?php echo $id++ ?></td>
                                     <td><?php echo htmlspecialchars($row['judul_materi']); ?></td>
                                     <td>
-                                        <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']); ?>" alt="Icon" width="50" height="50">
+                                        <img src="http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']); ?>" alt="Icon" width="50" height="50">
                                     </td>
-                                    <td><?php echo $row['status_materi']; ?></td>
+                                    <!--  -->
                                     <td>
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>

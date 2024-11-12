@@ -5,9 +5,9 @@ if (!isset($conn) || !$conn) {
     die("Koneksi database gagal: " . (isset($conn) ? mysqli_connect_error() : "Variabel koneksi tidak terdefinisi"));
 }
 
-function getCount($conn, $table, $column = '*')
+function getCount($conn, $table, $condition = '1=1')
 {
-    $query = "SELECT COUNT($column) AS total FROM $table";
+    $query = "SELECT COUNT(*) AS total FROM $table WHERE $condition"; 
     $result = $conn->query($query);
     return $result ? $result->fetch_assoc()['total'] : 0;
 }
@@ -15,9 +15,9 @@ function getCount($conn, $table, $column = '*')
 function getPaymentsByMonth($conn)
 {
     $query = "SELECT 
-              DATE_FORMAT(created_at, '%Y-%m') as bulan,
-              COUNT(*) as jumlah_transaksi,
-              SUM(harga) as total_pembayaran
+              DATE_FORMAT(created_at, '%Y-%m') AS bulan,
+              COUNT(*) AS jumlah_transaksi,
+              SUM(harga) AS total_pembayaran
             FROM view_transaksi_lengkap
             WHERE status_transaksi = 1
             GROUP BY DATE_FORMAT(created_at, '%Y-%m')  
@@ -26,9 +26,9 @@ function getPaymentsByMonth($conn)
     return $conn->query($query);
 }
 
-//Mengambil data total users,subscribers, dan materi
+// Mengambil data total users, subscribers, dan materi
 $totalUsers = getCount($conn, 'users');
-$totalSubscribers = getCount($conn, 'transaksi', 'status = 1 ');
+$totalSubscribers = getCount($conn, 'view_transaksi_lengkap', 'status_transaksi = 1'); // Menghitung hanya yang status_transaksi = 1
 $totalCourses = getCount($conn, 'materi');
 
 //Statistik pembayaran
@@ -92,7 +92,7 @@ $dataJson = json_encode($data);
                     <?php
                     $cardData = [
                         ['title' => 'Users', 'count' => $totalUsers, 'label' => 'Users'],
-                        ['title' => 'Subscribers', 'count' => $totalSubscribers, 'label' => 'User Berlangganan'],
+                        ['title' => 'Subscribers', 'count' => $totalSubscribers , 'label' => 'User Berlangganan'],
                         ['title' => 'Courses', 'count' => $totalCourses, 'label' => 'Total Materi']
                     ];
                     foreach ($cardData as $card) {

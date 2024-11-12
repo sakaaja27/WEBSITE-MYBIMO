@@ -143,7 +143,7 @@ $pembayarans = $conn->query("SELECT * FROM pembayaran");
 // Di file config atau functions
 function base_url($path = '')
 {
-    $base_url = 'http://localhost/website-mybimo/mybimo/src/'; // Sesuaikan dengan domain Anda
+    $base_url = 'http://localhost/website%20mybimo/mybimo/src/'; // Sesuaikan dengan domain Anda
     return $base_url . $path;
 }
 ?>

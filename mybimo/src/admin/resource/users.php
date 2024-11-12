@@ -185,7 +185,7 @@ $result = $conn->query("SELECT * FROM users");
                                     </td>
                                     <td><?php echo htmlspecialchars($row['phone']); ?></td>
                                     <td>
-                                        <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['upload_image']); ?>" alt="Icon" width="50" height="50">
+                                        <img src="http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['upload_image']); ?> " alt="file foto rusak" width="50" height="50">
                                     </td>
                                     <td>
                                         <!-- Tombol Edit -->
