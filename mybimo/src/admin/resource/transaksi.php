@@ -202,7 +202,7 @@ function base_url($path = '')
                                 <td><?= htmlspecialchars($row['harga']); ?></td>
                                 <td><?php
                                     echo $row['status_transaksi'] == '0' ? '<span class="badge bg-warning">Pending</span>' : ($row['status_transaksi'] == '1' ? '<span class="badge bg-success">Konfirmasi</span>' : ($row['status_transaksi'] == '2' ? '<span class="badge bg-danger">Ditolak</span>' :
-                                        '<span class="badge bg-secondary">Tidak Diketahui</span>'));
+                                        '<span class="badge bg-secondary">tidak aktif</span>'));
                                     ?></td>
 
                                 <td>
