@@ -33,15 +33,35 @@ include '../koneksi/koneksi.php';
         exit();
     }
 
-    $query = "INSERT INTO transaksi (id_user,id_pembayaran,status,upload_bukti,created_at) VALUES (?,?,?,?,NOW())";
+    $query = "SELECT * FROM transaksi WHERE id_user = ? AND id_pembayaran = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("iiss",$id_user, $id_pembayaran, $status, $upload_bukti);
+    $stmt->bind_param("ii", $id_user, $id_pembayaran);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($stmt->execute()){
-        echo json_encode(array("success" => true, "message" => "Transaksi berhasil dikonfirmasi"));
-    }else {
-        echo json_encode(array("success" => false, "message" => "Transaksi gagal dikonfirmasi"));
+    if($result->num_rows > 0){
+        $query = "UPDATE transaksi SET status =?,upload_bukti =?,created_at = NOW() WHERE id_user = ? AND id_pembayaran = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("isii", $status, $upload_bukti, $id_user, $id_pembayaran);
+        if ($stmt->execute()){
+            echo json_encode(array("success" => true, "message" => "Transaksi berhasil dikonfirmasi"));
+        }else {
+            echo json_encode(array("success" => false, "message" => "Transaksi gagal dikonfirmasi"));
+        }
     }
+    else {
+        $query = "INSERT INTO transaksi (id_user,id_pembayaran,status,upload_bukti,created_at) VALUES (?,?,?,?,NOW())";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("iiss",$id_user, $id_pembayaran, $status, $upload_bukti);
+
+        if ($stmt->execute()){
+            echo json_encode(array("success" => true, "message" => "Transaksi berhasil dikonfirmasi"));
+        }else {
+            echo json_encode(array("success" => false, "message" => "Transaksi gagal dikonfirmasi"));
+        }
+    }
+  
+    
     $stmt->close();
     
 

@@ -241,7 +241,7 @@ function base_url($path = '')
                                                             <p class="form-label">Status transaksi :
                                                                 <?php
                                                                 echo $row['status_transaksi'] == '0' ? '<span class="badge bg-warning">Pending</span>' : ($row['status_transaksi'] == '1' ? '<span class="badge bg-success">Konfirmasi</span>' : ($row['status_transaksi'] == '2' ? '<span class="badge bg-danger">Ditolak</span>' :
-                                                                    '<span class="badge bg-secondary">Tidak Diketahui</span>'));
+                                                                    '<span class="badge bg-secondary">Tidak Aktif</span>'));
                                                                 ?>
                                                             </p>
                                                         </div>
@@ -305,7 +305,7 @@ function base_url($path = '')
                         <label for="id_user" class="form-label">User</label>
                         <select name="id_user" id="id_user" class="form-control">
                             <?php
-                            $users->data_seek(0); 
+                            $users->data_seek(0);
                             while ($user = $users->fetch_assoc()): ?>
                                 <option value="<?= $user['id'] ?>">
                                     <?= $user['username'] ?>
@@ -317,7 +317,7 @@ function base_url($path = '')
                         <label for="id_pembayaran" class="form-label">Pembayaran</label>
                         <select name="id_pembayaran" id="id_pembayaran" class="form-control" required>
                             <?php
-                            $pembayarans->data_seek(0); 
+                            $pembayarans->data_seek(0);
                             while ($pembayaran = $pembayarans->fetch_assoc()): ?>
                                 <option value="<?= $pembayaran['id'] ?>">
                                     <?= $pembayaran['nama_pembayaran'] . ' - ' . $pembayaran['harga'] . '' ?>
@@ -334,7 +334,7 @@ function base_url($path = '')
                     </div>
                     <div class="mb-3">
                         <label for="upload_bukti" class="form-label">Upload Bukti</label>
-                        <input type="file" class="form-control" name="upload_bukti" id="upload_bukti" required>
+                        <input type="file" class="form-control" name="upload_bukti" id="upload_bukti" accept="image/*" required>
                     </div>
                 </div>
                 <div class="modal-footer">

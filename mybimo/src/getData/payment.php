@@ -1,7 +1,7 @@
 <?php 
     include "../koneksi/koneksi.php";
 
-    $query = "SELECT * FROM pembayaran where id = 1";
+    $query = "SELECT * FROM pembayaran ";
     $msql = mysqli_query($conn, $query);
     $json = array();
 

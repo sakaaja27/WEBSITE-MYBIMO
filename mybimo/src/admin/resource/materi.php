@@ -186,7 +186,7 @@ $result = $conn->query("SELECT * FROM materi");
                                                             accept=".jpg,.jpeg,.png">
                                                         <small>Biarkan kosong jika tidak ingin mengganti foto.</small>
                                                         <div class="mt-2">
-                                                            <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']);
+                                                            <img src="http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']);
                                                                                                                             ?>" alt="Icon" width="50" height="50">
                                                         </div>
                                                     </div>
