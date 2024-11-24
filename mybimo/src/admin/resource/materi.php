@@ -11,7 +11,6 @@ if (!file_exists($target_dir)) {
 // Fungsi untuk menambahkan materi
 if (isset($_POST['add_materi'])) {
     $judul_materi = $_POST['judul_materi'];
-    $status_materi = 1;
 
     if ($_FILES["foto_icon"]["error"] != 4) {
         $fileName = $_FILES["foto_icon"]["name"];
@@ -25,14 +24,13 @@ if (isset($_POST['add_materi'])) {
         } elseif ($fileSize > 1000000) {
             echo "<script>alert('Image Size Is Too Large');</script>";
         } else {
-            $newImageName = 'storageImage/' . uniqid() . '.' . $imageExtension; // Menyimpan path relatif
+            $newImageName = 'storageImage/' . uniqid() . '.' . $imageExtension; 
 
             if (move_uploaded_file($tmpName, $target_dir . basename($newImageName))) {
-                // Simpan path relatif ke database
-                $sql = "INSERT INTO materi (judul_materi, foto_icon, created_at, status_materi) 
-                        VALUES (?, ?, NOW(), ?)";
+                $sql = "INSERT INTO materi (judul_materi, foto_icon, created_at) 
+                        VALUES (?, ?, NOW())";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssi", $judul_materi, $newImageName, $status_materi);
+                $stmt->bind_param("ss", $judul_materi, $newImageName );
 
                 if ($stmt->execute()) {
                     echo "<script>alert('Materi berhasil ditambahkan!'); window.location.href='admin/index.php?materi';</script>";
@@ -49,7 +47,6 @@ if (isset($_POST['add_materi'])) {
 if (isset($_POST['update_materi'])) {
     $id = $_POST['id'];
     $judul_materi = $_POST['judul_materi'];
-    $status_materi = $_POST['status_materi'];
     $newImageName = "";
 
     if ($_FILES["foto_icon"]["error"] != 4) {
@@ -66,13 +63,13 @@ if (isset($_POST['update_materi'])) {
     }
 
     if ($newImageName) {
-        $query = "UPDATE materi SET judul_materi=?, foto_icon=?, status_materi=? WHERE id=?";
+        $query = "UPDATE materi SET judul_materi=?, foto_icon=? WHERE id=?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssii", $judul_materi, $newImageName, $status_materi, $id);
+        $stmt->bind_param("ssi", $judul_materi, $newImageName,$id);
     } else {
-        $query = "UPDATE materi SET judul_materi=?, status_materi=? WHERE id=?";
+        $query = "UPDATE materi SET judul_materi=? WHERE id=?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("sii", $judul_materi, $status_materi, $id);
+        $stmt->bind_param("si", $judul_materi,$id);
     }
 
     if ($stmt->execute()) {
@@ -150,7 +147,7 @@ $result = $conn->query("SELECT * FROM materi");
                                     <td><?php echo $id++ ?></td>
                                     <td><?php echo htmlspecialchars($row['judul_materi']); ?></td>
                                     <td>
-                                        <img src="http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']); ?>" alt="Icon" width="50" height="50">
+                                        <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']); ?>" alt="Icon" width="50" height="50">
                                     </td>
                                     <!--  -->
                                     <td>
@@ -186,15 +183,15 @@ $result = $conn->query("SELECT * FROM materi");
                                                             accept=".jpg,.jpeg,.png">
                                                         <small>Biarkan kosong jika tidak ingin mengganti foto.</small>
                                                         <div class="mt-2">
-                                                            <img src="http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']);
+                                                            <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['foto_icon']);
                                                                                                                             ?>" alt="Icon" width="50" height="50">
                                                         </div>
                                                     </div>
-                                                    <div class="mb-3">
+                                                    <!-- <div class="mb-3">
                                                         <label class="form-label">Status Materi</label>
                                                         <input type="number" class="form-control" name="status_materi"
                                                             value="<?php echo $row['status_materi']; ?>" required>
-                                                    </div>
+                                                    </div> -->
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"

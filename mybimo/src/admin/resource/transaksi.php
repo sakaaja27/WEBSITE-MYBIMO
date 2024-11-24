@@ -143,7 +143,7 @@ $pembayarans = $conn->query("SELECT * FROM pembayaran");
 // Di file config atau functions
 function base_url($path = '')
 {
-    $base_url = 'http://localhost/website%20mybimo/mybimo/src/'; // Sesuaikan dengan domain Anda
+    $base_url = 'http://localhost/WEBSITE-MYBIMO/mybimo/src/'; // Sesuaikan dengan domain Anda
     return $base_url . $path;
 }
 ?>
@@ -202,7 +202,7 @@ function base_url($path = '')
                                 <td><?= htmlspecialchars($row['harga']); ?></td>
                                 <td><?php
                                     echo $row['status_transaksi'] == '0' ? '<span class="badge bg-warning">Pending</span>' : ($row['status_transaksi'] == '1' ? '<span class="badge bg-success">Konfirmasi</span>' : ($row['status_transaksi'] == '2' ? '<span class="badge bg-danger">Ditolak</span>' :
-                                        '<span class="badge bg-secondary">tidak aktif</span>'));
+                                        '<span class="badge bg-secondary">Tidak Diketahui</span>'));
                                     ?></td>
 
                                 <td>
@@ -241,7 +241,7 @@ function base_url($path = '')
                                                             <p class="form-label">Status transaksi :
                                                                 <?php
                                                                 echo $row['status_transaksi'] == '0' ? '<span class="badge bg-warning">Pending</span>' : ($row['status_transaksi'] == '1' ? '<span class="badge bg-success">Konfirmasi</span>' : ($row['status_transaksi'] == '2' ? '<span class="badge bg-danger">Ditolak</span>' :
-                                                                    '<span class="badge bg-secondary">Tidak Aktif</span>'));
+                                                                    '<span class="badge bg-secondary">Tidak Diketahui</span>'));
                                                                 ?>
                                                             </p>
                                                         </div>
@@ -334,7 +334,8 @@ function base_url($path = '')
                     </div>
                     <div class="mb-3">
                         <label for="upload_bukti" class="form-label">Upload Bukti</label>
-                        <input type="file" class="form-control" name="upload_bukti" id="upload_bukti" accept="image/*" required>
+                        <input type="file" class="form-control" name="upload_bukti" id="upload_bukti" required>
+                        <small class="text-muted">Format: JPG, JPEG, PNG (Max 1MB)</small>
                     </div>
                 </div>
                 <div class="modal-footer">

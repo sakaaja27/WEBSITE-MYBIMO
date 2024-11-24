@@ -7,7 +7,7 @@ if (!isset($conn) || !$conn) {
 
 function getCount($conn, $table, $condition = '1=1')
 {
-    $query = "SELECT COUNT(*) AS total FROM $table WHERE $condition"; 
+    $query = "SELECT COUNT(*) AS total FROM $table WHERE $condition";
     $result = $conn->query($query);
     return $result ? $result->fetch_assoc()['total'] : 0;
 }
@@ -92,7 +92,7 @@ $dataJson = json_encode($data);
                     <?php
                     $cardData = [
                         ['title' => 'Users', 'count' => $totalUsers, 'label' => 'Users'],
-                        ['title' => 'Subscribers', 'count' => $totalSubscribers , 'label' => 'User Berlangganan'],
+                        ['title' => 'Subscribers', 'count' => $totalSubscribers, 'label' => 'User Berlangganan'],
                         ['title' => 'Courses', 'count' => $totalCourses, 'label' => 'Total Materi']
                     ];
                     foreach ($cardData as $card) {
@@ -124,23 +124,13 @@ $dataJson = json_encode($data);
                 </div>
 
                 <div class="row mt-4">
-                    <!-- <div class="col-md-6">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title">Total Pembayaran</h5>
-                            </div>
-                            <div class="card-body">
-                                <canvas id="revenueChart" style="height: 300px"></canvas>
-                            </div>
-                        </div>
-                    </div> -->
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5 class="card-title">Laporan Pembayaran Bulanan</h5>
                             </div>
                             <div class="card-body">
-                                <canvas id="monthlyPaymentChart" style=" width: 500px; height: 500px;"></canvas>
+                                <canvas id="monthlyPaymentChart" style="width: 500px; height: 500px;"></canvas>
                             </div>
                         </div>
                     </div>

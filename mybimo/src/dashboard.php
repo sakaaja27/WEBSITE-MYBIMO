@@ -240,10 +240,10 @@
 
 <section><!-- Fourth Section -->
 
-<div class="card-container">
+<!-- <div class="card-container">
         <img src="assets-frontend/img/card2/card1.png" alt="Card Image" class="card-image">
         <a href="#" class="button-overlay">Lihat Detail</a>
-    </div>
+    </div> -->
 
 </section><!-- /Fourth Section -->  
 

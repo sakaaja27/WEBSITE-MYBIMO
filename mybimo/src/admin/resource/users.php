@@ -8,7 +8,16 @@ if (!file_exists($target_dir)) {
     mkdir($target_dir, 0777, true);
 }
 
-// Proses penambahan pengguna baru
+//fungsi validasi email
+function isValidEmail($email){
+    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+}
+
+//fungsi validasi username
+function isValidUsername($username) {
+    return preg_match('/^[a-zA-Z0-9_]{3,20}$/', $username);
+}
+
 // Proses penambahan pengguna baru
 if (isset($_POST['add_user'])) {
     $username = $_POST['username'];
@@ -18,6 +27,30 @@ if (isset($_POST['add_user'])) {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $newImageName = "";
 
+    //validasi username 
+    if (!isValidUsername($username)) {
+        echo "<script>alert('Username tidak valid. Hanya boleh berisi huruf, angka, dan underscore (3 - 20 karakter).'); window.location.href='admin/index.php?users';</script>";
+        return;
+    }
+
+    //validasi email
+    if (!isValidEmail($email)) {
+        echo "<script>alert('Format email tidak valid'); window.location.href='admin/index.php?users';</script>";
+        return;
+    }
+
+    //validasi nomer telephone
+    if (strlen($phone) > 12) {
+        echo "<script>alert('Nomor Telepon tidak boleh lebih dari 12.'); window.location.href='admin/index.php?users';</script>";
+        return;
+    }
+
+    if (!ctype_digit($phone)) {
+        echo "<script>alert('Nomor telepon hanya boleh terdiri dari angka.'); window.location.href='admin/index.php?users';</script>";
+        return;
+    }
+
+    //cek keunikan email
     $emailCheckQuery = "SELECT * FROM users WHERE email = ?";
     $emailCheckStmt = $conn->prepare($emailCheckQuery);
     $emailCheckStmt->bind_param("s", $email);
@@ -25,47 +58,58 @@ if (isset($_POST['add_user'])) {
     $emailCheckResult = $emailCheckStmt->get_result();
 
     if ($emailCheckResult->num_rows > 0) {
-        echo "<script>alert('Email sudah terdaftar! Silahkan gunakan email lain.');</script>";
-    } else {
-        $usernameCheckQuery = "SELECT * FROM users WHERE username = ?";
-        $usernameCheckStmt = $conn->prepare($usernameCheckQuery);
-        $usernameCheckStmt -> bind_param("s", $username);
-        $usernameCheckStmt -> execute();
-        $usernameCheckResult = $usernameCheckStmt -> get_result();
+        echo "<script>alert('Email sudah terdaftar! Silahkan gunakan email lain.'); window.location.href='admin/index.php?users';</script>";
+        $emailCheckStmt->close();
+        return;
+    } 
 
-        echo "<script>alert('Username sudah terdaftar! Silahkan gunakan username lain.');</script>";
-        if ($_FILES["upload_image"]["error"] == 0) {
-            $fileName = $_FILES["upload_image"]["name"];
-            $fileSize = $_FILES["upload_image"]["size"];
-            $tmpName = $_FILES["upload_image"]["tmp_name"];
-            $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    //cek keunikan username
+    $usernameCheckQuery = "SELECT * FROM users WHERE username = ?";
+    $usernameCheckStmt = $conn->prepare($usernameCheckQuery);
+    $usernameCheckStmt->bind_param("s", $username);
+    $usernameCheckStmt->execute();
+    $usernameCheckResult = $usernameCheckStmt->get_result();
 
-            if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
-                $newImageName = 'storage/' . uniqid() . '.' . $imageExtension; 
-                $targetFilePath = $target_dir . basename($newImageName); 
+    if ($usernameCheckResult->num_rows > 0) {
+        echo "<script>alert('Username sudah terdaftar! Silahkan gunakan username lain.'); window.location.href='admin/index.php?users';</script>";
+        $usernameCheckStmt->close();
+        return;
+    } 
 
-                if (move_uploaded_file($tmpName, $targetFilePath)) {
-                    $query = "INSERT INTO users (username, email, role, phone, password, upload_image) VALUES (?, ?, ?, ?, ?, ?)";
-                    $stmt = $conn->prepare($query);
-                    $stmt->bind_param("ssisss", $username, $email, $role, $phone, $password, $newImageName);
+    if ($_FILES["upload_image"]["error"] == 0) {
+        $fileName = $_FILES["upload_image"]["name"];
+        $fileSize = $_FILES["upload_image"]["size"];
+        $tmpName = $_FILES["upload_image"]["tmp_name"];
+        $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
-                    if ($stmt->execute()) {
-                        echo "<script>alert('User  berhasil ditambahkan!'); window.location.href='admin/index.php?users';</script>";
-                    } else {
-                        echo "<script>alert('Error: " . $stmt->error . "');</script>";
-                    }
-                    $stmt->close();
+        if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
+            $newImageName = 'storage/' . uniqid() . '.' . $imageExtension;
+            $targetFilePath = $target_dir . basename($newImageName);
+
+            if (move_uploaded_file($tmpName, $targetFilePath)) {
+                $query = "INSERT INTO users (username, email, role, phone, password, upload_image) VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("ssisss", $username, $email, $role, $phone, $password, $newImageName);
+
+                if ($stmt->execute()) {
+                    echo "<script>alert('User  berhasil ditambahkan!'); window.location.href='admin/index.php?users';</script>";
                 } else {
-                    echo "<script>alert('Failed to upload image');</script>";
+                    echo "<script>alert('Error: " . $stmt->error . "');</script>";
                 }
+                $stmt->close();
             } else {
-                echo "<script>alert('Invalid image extension or size too large');</script>";
+                echo "<script>alert('Failed to upload image');</script>";
             }
         } else {
-            echo "<script>alert('Please upload an image');</script>";
+            echo "<script>alert('Invalid image extension or size too large');</script>";
         }
+    } else {
+        echo "<script>alert('Please upload an image');</script>";
     }
-    $emailCheckStmt->close();
+
+    // Tutup hasil query
+    $emailCheckResult->close();
+    $usernameCheckResult->close();
 }
 
 // Proses update pengguna
@@ -75,7 +119,28 @@ if (isset($_POST['update_user'])) {
     $email = $_POST['email'];
     $role = (int)$_POST['role'];
     $phone = $_POST['phone'];
-    $newImageName = "";
+
+    //validasi username 
+    if (!isValidUsername($username)) {
+        echo "<script>alert('Username tidak valid. Hanya boleh berisi huruf, angka, dan underscore (3 - 20 karakter).'); window.location.href='admin/index.php?users';</script>";
+        return;
+    }
+
+    //validasi email
+    if (!isValidEmail($email)) {
+        echo "<script>alert('Format email tidak valid'); window.location.href='admin/index.php?users';</script>";
+        return;
+    }
+
+    if (strlen($phone) > 12) {
+        echo "<script>alert('Nomor telepon tidak boleh lebih dari 12.'); window.location.href='admin/index.php?users';</script>";
+        return;
+    }
+
+    if (!ctype_digit($phone)) {
+        echo "<script>alert('Nomor telepon hanya boleh terdiri dari angka.'); window.location.href='admin/index.php?users';</script>";
+        return;
+    }
 
     if ($_FILES["upload_image"]["error"] == 0) {
         $fileName = $_FILES["upload_image"]["name"];
@@ -84,8 +149,8 @@ if (isset($_POST['update_user'])) {
         $imageExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
         if (in_array($imageExtension, $validImageExtension) && $fileSize <= 1000000) {
-            $newImageName = 'storage/' . uniqid() . '.' . $imageExtension; // Path relatif
-            $targetFilePath = $target_dir . basename($newImageName); // Define the target file path
+            $newImageName = 'storage/' . uniqid() . '.' . $imageExtension;
+            $targetFilePath = $target_dir . basename($newImageName);
 
             if (move_uploaded_file($tmpName, $targetFilePath)) {
                 $query = "UPDATE users SET username = ?, email = ?, role = ?, upload_image = ?, phone = ? WHERE id = ?";
@@ -100,18 +165,10 @@ if (isset($_POST['update_user'])) {
             return;
         }
     } else {
-        $query = "SELECT upload_image FROM users WHERE id = ?";
+        //update tanpa merubah image
+        $query = "UPDATE users SET username = ?, email = ?, role = ?, phone = ? WHERE id = ?";
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $existingImageName = $row['upload_image'];
-
-        // Update tanpa mengganti gambar
-        $query = "UPDATE users SET username = ?, email = ?, role = ?, upload_image = ?, phone = ? WHERE id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param("ssissi", $username, $email, $role, $existingImageName, $phone, $id);
+        $stmt->bind_param("ssssi", $username, $email, $role, $phone, $id);
     }
 
     if ($stmt->execute()) {
@@ -182,7 +239,7 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                         </thead>
                         <tbody>
                             <?php
-                            $id = 1; 
+                            $id = 1;
                             while ($row = $result->fetch_assoc()): ?>
                                 <tr>
                                     <td><?php echo $id++; ?></td>
@@ -190,14 +247,14 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                                     <td><?php echo htmlspecialchars($row['email']); ?></td>
                                     <td>
                                         <?php
-                                        echo $row['role'] == 0 ? 'User ' : 'Admin';
+                                        echo $row['role'] == 0 ? 'User  ' : 'Admin';
                                         ?>
                                     </td>
                                     <td><?php echo htmlspecialchars($row['phone']); ?></td>
                                     <td>
                                         <?php
                                         echo !empty($row['upload_image'])
-                                            ? '<img src="http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/' . htmlspecialchars($row['upload_image']) . '" alt="User  Image" width="50" height="50">'
+                                            ? '<img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/' . htmlspecialchars($row['upload_image']) . '" alt="User  Image" width="50" height="50">'
                                             : 'Tidak ada foto';
                                         ?>
                                     </td>
@@ -234,7 +291,7 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                                                     <div class="mb-3">
                                                         <label for="role" class="form-label">Role</label>
                                                         <select name="role" class="form-select" required>
-                                                            <option value="0" <?php echo ($row['role'] == 0) ? 'selected' : ''; ?>>User </option>
+                                                            <option value="0" <?php echo ($row['role'] == 0) ? 'selected' : ''; ?>>User  </option>
                                                             <option value="1" <?php echo ($row['role'] == 1) ? 'selected' : ''; ?>>Admin</option>
                                                         </select>
                                                     </div>
@@ -244,7 +301,11 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="upload_image" class="form-label">Upload Image</label>
-                                                        <input type="file" class="form-control" name="upload_image">
+                                                        <input type="file" class="form-control" name="upload_image" accept=".jpg,.jpeg,.png">
+                                                        <small class="text-muted">Biarkan kosong jika tidak ingin mengganti foto.</small>
+                                                        <div class="mt-2">
+                                                            <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['upload_image']); ?>" alt="Icon" width="60" height="60">
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -285,7 +346,7 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                     <div class="mb-3">
                         <label for="role" class="form-label">Role</label>
                         <select name="role" class="form-select" required>
-                            <option value="0">User </option>
+                            <option value="0">User  </option>
                             <option value="1">Admin</option>
                         </select>
                     </div>
@@ -299,7 +360,8 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                     </div>
                     <div class="mb-3">
                         <label for="upload_image" class="form-label">Upload Image</label>
-                        <input type="file" class="form-control" name="upload_image" required>
+                        <input type="file" class="form-control" name="upload_image" accept=".jpg,.jpeg,.png" required>
+                        <small class="text-muted">Format: JPG, JPEG, PNG (Max 1MB)</small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -316,5 +378,4 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 
 </body>
-
 </html>
