@@ -9,12 +9,14 @@ if (!file_exists($target_dir)) {
 }
 
 //fungsi validasi email
-function isValidEmail($email){
+function isValidEmail($email)
+{
     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
 }
 
 //fungsi validasi username
-function isValidUsername($username) {
+function isValidUsername($username)
+{
     return preg_match('/^[a-zA-Z0-9_]{3,20}$/', $username);
 }
 
@@ -61,7 +63,7 @@ if (isset($_POST['add_user'])) {
         echo "<script>alert('Email sudah terdaftar! Silahkan gunakan email lain.'); window.location.href='admin/index.php?users';</script>";
         $emailCheckStmt->close();
         return;
-    } 
+    }
 
     //cek keunikan username
     $usernameCheckQuery = "SELECT * FROM users WHERE username = ?";
@@ -74,7 +76,7 @@ if (isset($_POST['add_user'])) {
         echo "<script>alert('Username sudah terdaftar! Silahkan gunakan username lain.'); window.location.href='admin/index.php?users';</script>";
         $usernameCheckStmt->close();
         return;
-    } 
+    }
 
     if ($_FILES["upload_image"]["error"] == 0) {
         $fileName = $_FILES["upload_image"]["name"];
@@ -291,7 +293,7 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                                                     <div class="mb-3">
                                                         <label for="role" class="form-label">Role</label>
                                                         <select name="role" class="form-select" required>
-                                                            <option value="0" <?php echo ($row['role'] == 0) ? 'selected' : ''; ?>>User  </option>
+                                                            <option value="0" <?php echo ($row['role'] == 0) ? 'selected' : ''; ?>>User </option>
                                                             <option value="1" <?php echo ($row['role'] == 1) ? 'selected' : ''; ?>>Admin</option>
                                                         </select>
                                                     </div>
@@ -346,7 +348,7 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                     <div class="mb-3">
                         <label for="role" class="form-label">Role</label>
                         <select name="role" class="form-select" required>
-                            <option value="0">User  </option>
+                            <option value="0">User </option>
                             <option value="1">Admin</option>
                         </select>
                     </div>
@@ -355,8 +357,11 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                         <input type="text" class="form-control" name="phone" required>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password" required>
+                        <label for="yourPassword" class="form-label">Password</label>
+                        <input type="password" name="password" class="form-control" id="yourPassword"
+                            placeholder="Password" required
+                            minlength="6">
+                        <div class="invalid-feedback">Please enter a password (min. 6 characters)!</div>
                     </div>
                     <div class="mb-3">
                         <label for="upload_image" class="form-label">Upload Image</label>
@@ -378,4 +383,5 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 
 </body>
+
 </html>
