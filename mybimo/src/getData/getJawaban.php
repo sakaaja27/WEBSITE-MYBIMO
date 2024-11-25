@@ -1,17 +1,21 @@
 <?php
 include "../koneksi/koneksi.php";
 
-// Validasi apakah parameter jawaban_user ada dan tidak kosong
-if (!isset($_POST['jawaban_user']) || empty($_POST['jawaban_user'])) {
+// Memastikan bahwa permintaan adalah POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode([
         'status' => 'error',
-        'message' => 'Parameter jawaban_user tidak ditemukan atau kosong.'
+        'message' => 'Metode permintaan tidak valid. Harus menggunakan POST.'
     ]);
     exit();
 }
 
-// Mengambil jawaban user dari request POST (pastikan data diterima sebagai JSON)
-$jawaban_user = json_decode($_POST['jawaban_user'], true); // Menggunakan json_decode untuk memastikan data terkonversi ke array
+// Mengambil input JSON dari body permintaan
+$data = json_decode(file_get_contents('php://input'), true);
+
+// Mengambil jawaban user dan user_id dari request
+$jawaban_user = $data['jawaban_user'] ?? null; // Menggunakan null coalescing operator
+$user_id = intval($data['user_id'] ?? 0); // Menggunakan null coalescing operator
 
 // Validasi apakah jawaban_user adalah array
 if (!is_array($jawaban_user)) {
@@ -24,44 +28,76 @@ if (!is_array($jawaban_user)) {
 
 $jumlah_benar = 0;
 $jumlah_salah = 0;
+$id_materi = null; // Variabel untuk menyimpan id_materi
 
 try {
     // Query untuk mendapatkan semua kunci jawaban dari database
-    $query = "SELECT id, jawaban_soal FROM soal_submateri WHERE id IN (" . implode(",", array_map('intval', array_keys($jawaban_user))) . ")";
+    $query = "SELECT id, jawaban_benar, id_materi FROM soal_submateri WHERE id IN (" . 
+             implode(",", array_map('intval', array_keys($jawaban_user))) . ")";
     $result = $conn->query($query);
 
     // Memeriksa apakah query berhasil dan ada data yang ditemukan
-    if ($result->num_rows > 0) {
+    if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            $id = $row['id'];
-            $jawaban_soal = $row['jawaban_soal'];
+            $id_soalmateri = $row['id'];
+            $jawaban_benar = $row['jawaban_benar']; // Menggunakan jawaban
+            $id_materi = $row['id_materi']; // Ambil id_materi, ambil dari soal pertama
 
             // Periksa jawaban user terhadap kunci jawaban dari database
-            if (isset($jawaban_user[$id])) {
-                if ($jawaban_user[$id] == $jawaban_soal) {
+            if (isset($jawaban_user[$id_soalmateri])) {
+                if ($jawaban_user[$id_soalmateri] == $jawaban_benar) {
                     $jumlah_benar++;
                 } else {
                     $jumlah_salah++;
                 }
             }
         }
-    }
 
-    // Mengembalikan hasil akhir setelah pengecekan
-    echo json_encode([
-        'status' => 'selesai',
-        'jumlah_benar' => $jumlah_benar,
-        'jumlah_salah' => $jumlah_salah
-    ]);
+        // Simpan satu hasil ke tabel riwayat_jawaban
+        $insert_query = "INSERT INTO riwayat_jawaban (user_id, jumlah_benar, jumlah_salah, id_materi, tanggal) 
+                         VALUES (?, ?, ?, ?, NOW())";
+        $stmt = $conn->prepare($insert_query);
+        
+        // Simpan hasil jawaban dengan id_materi
+        $stmt->bind_param("iiis", $user_id, $jumlah_benar, $jumlah_salah, $id_materi); // Menggunakan id_materi dari soal pertama
+        $stmt->execute();
+
+        // Ambil riwayat jawaban per user
+        $riwayat_query = "SELECT id, user_id, id_materi, jumlah_benar, jumlah_salah, tanggal FROM riwayat_jawaban WHERE user_id = ? ORDER BY tanggal DESC";
+        $stmt_riwayat = $conn->prepare($riwayat_query);
+        $stmt_riwayat->bind_param("i", $user_id);
+        $stmt_riwayat->execute();
+        $result_riwayat = $stmt_riwayat->get_result();
+
+        $riwayat_jawaban = [];
+        while ($row_riwayat = $result_riwayat->fetch_assoc()) {
+            $riwayat_jawaban[] = $row_riwayat;
+        }
+
+        // Mengembalikan hasil akhir setelah pengecekan
+        echo json_encode([
+            'status' => 'selesai',
+            'jumlah_benar' => $jumlah_benar,
+            'jumlah_salah' => $jumlah_salah,
+            'riwayat_jawaban' => $riwayat_jawaban
+        ]);
+
+    } else {    
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Tidak ada soal yang ditemukan.'
+        ]);
+    }
 
 } catch (Exception $e) {
     // Tangani error database atau query
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Terjadi kesalahan: ' . $e->getMessage()
-    ]);
-}
-
-// Tutup koneksi
-$conn->close();
-?>
+        // Tangani error database atau query
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+        ]);
+    }
+    
+    // Tutup koneksi
+    $conn->close();
+    ?>
