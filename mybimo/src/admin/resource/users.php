@@ -218,7 +218,6 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                                     <li>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><em class="icon ni ni-plus"></em> Add Data</button>
                                     </li>
-                                    <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em class="icon ni ni-reports"></em><span>Reports</span></a></li>
                                 </ul>
                             </div>
                         </div>

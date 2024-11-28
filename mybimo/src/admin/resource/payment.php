@@ -76,9 +76,6 @@ $payment_count = $result -> num_rows; //untuk menghitung jumlah entri pembayaran
                                             data-bs-target="#addModal" <?php echo($payment_count >= 1) ? 'disabled' : '';?>><em class="icon ni ni-plus"></em>
                                             Add Data
                                         </button>
-                                        <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em
-                                     class="icon ni ni-reports"></em><span>Reports</span></a></li>
-                                    </li>
                                 </ul>
                             </div>
                         </div>

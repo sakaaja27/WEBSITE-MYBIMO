@@ -31,7 +31,7 @@ if (isset($_POST['add_transaksi'])) {
                 echo "<script>alert('Gagal mengunggah gambar'); window.location.href='admin/index.php?transaksi';</script>";
                 exit;
             }
-        } else {
+        } else {    
             echo "<script>alert('Ekstensi gambar tidak valid atau ukuran terlalu besar'); window.location.href='admin/index.php?transaksi';</script>";
             exit;
         }
@@ -135,6 +135,13 @@ if (isset($_POST['delete_transaksi'])) {
     $stmt->close();
 }
 
+//mengambil data transaksi setiap users
+$transaksi_users = [];
+$result_transaksi = $conn->query("SELECT id_user FROM transaksi");
+while ($row_transaksi = $result_transaksi->fetch_assoc()) {
+    $transaksi_users[] = $row_transaksi['id_user'];
+}
+
 // Mengambil data transaksi
 $result = $conn->query("select * from view_transaksi_lengkap");
 $users = $conn->query("SELECT * FROM users");
@@ -170,8 +177,6 @@ function base_url($path = '')
                                             Add Data
                                         </button>
                                     </li>
-                                    <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em
-                                                class="icon ni ni-reports"></em><span>Reports</span></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -202,7 +207,7 @@ function base_url($path = '')
                                 <td><?= htmlspecialchars($row['harga']); ?></td>
                                 <td><?php
                                     echo $row['status_transaksi'] == '0' ? '<span class="badge bg-warning">Pending</span>' : ($row['status_transaksi'] == '1' ? '<span class="badge bg-success">Konfirmasi</span>' : ($row['status_transaksi'] == '2' ? '<span class="badge bg-danger">Ditolak</span>' :
-                                        '<span class="badge bg-secondary">Tidak Diketahui</span>'));
+                                        '<span class="badge bg-secondary">Tidak Aktif</span>'));
                                     ?></td>
 
                                 <td>
@@ -306,11 +311,13 @@ function base_url($path = '')
                         <select name="id_user" id="id_user" class="form-control">
                             <?php
                             $users->data_seek(0);
-                            while ($user = $users->fetch_assoc()): ?>
-                                <option value="<?= $user['id'] ?>">
-                                    <?= $user['username'] ?>
-                                </option>
-                            <?php endwhile; ?>
+                            while ($user = $users->fetch_assoc()): 
+                                if (!in_array($user['id'], $transaksi_users)): ?>
+                                    <option value="<?= $user['id'] ?>">
+                                        <?= $user['username'] ?>
+                                    </option>
+                                <?php endif; 
+                            endwhile; ?>
                         </select>
                     </div>
                     <div class="mb-3">

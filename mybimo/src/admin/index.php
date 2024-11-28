@@ -28,6 +28,10 @@
                     <?php include('./resource/soal.php') ?>
                 <?php elseif (isset($_GET['transaksi'])): ?>
                     <?php include('./resource/transaksi.php') ?>
+                <?php elseif (isset($_GET['zoom'])): ?>
+                        <?php include('./resource/zoom.php') ?>
+                <?php elseif (isset($_GET['historysoal'])): ?>
+                        <?php include('./resource/historysoal.php') ?>
                 <?php else: ?>
                     <?php include('main.php') ?>
                 <?php endif; ?>

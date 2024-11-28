@@ -116,7 +116,6 @@ if (isset($_POST['delete'])) {
                                     <li>
                                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"><em class="icon ni ni-plus"></em> Add Data</button>
                                     </li>
-                                    <li class="nk-block-tools-opt"><a href="#" class="btn btn-primary"><em class="icon ni ni-reports"></em><span>Reports</span></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -148,7 +147,6 @@ if (isset($_POST['delete'])) {
                                         <?php if (!empty($row['upload_file'])): ?>
                                             <?php
                                             $file_url = 'http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/' . rawurldecode($row['upload_file']);
-                                            echo $file_url;
                                             ?>
                                             <a href="<?php echo $file_url; ?>" target="_blank"><?php echo basename($row['upload_file']); ?></a>
                                         <?php else: ?>
