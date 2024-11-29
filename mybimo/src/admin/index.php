@@ -32,6 +32,8 @@
                         <?php include('./resource/zoom.php') ?>
                 <?php elseif (isset($_GET['historysoal'])): ?>
                         <?php include('./resource/historysoal.php') ?>
+                <?php elseif (isset($_GET['hasilquiz'])): ?>
+                        <?php include('./resource/hasilquiz.php') ?>
                 <?php else: ?>
                     <?php include('main.php') ?>
                 <?php endif; ?>

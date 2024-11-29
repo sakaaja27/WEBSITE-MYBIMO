@@ -67,6 +67,10 @@
                                 <a href="admin/index.php?historysoal" class="nk-menu-link"><span
                                         class="nk-menu-text">History Soal</span></a>
                             </li>
+                            <li class="nk-menu-item">
+                                <a href="admin/index.php?hasilquiz" class="nk-menu-link"><span
+                                        class="nk-menu-text">Hasil Quiz</span></a>
+                            </li>
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item">
