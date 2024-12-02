@@ -8,9 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-     <link href="assets-frontend/css/sec.css" rel="stylesheet">
-     
-    
+     <link href="assets-frontend/css/dashboard.css" rel="stylesheet">
+  
 </head>
 <body class="dashboard-page">
 
@@ -207,23 +206,63 @@
 </section><!-- /Second Section -->
 <!-- Third Section -->
 <section id="third">
-  <h1 id="h1satunya" class="feature">
-    <i id="bintanglagi" class="fa fa-star" aria-hidden="true"></i> Interesting features on MyBimo!
-  </h1>
-
-  <div class="carousel-box">
-    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel" style="width: 100%; height: auto;">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="assets-frontend/img/carousel/carousel1.jpg" class="d-block w-100" alt="">
+  <div class="carousel-container">
+    <div class="left-side">
+    <h5>Lihat beragam <br><strong>promo spesial</strong> <br>untukmu di <br><strong>bulan November</strong></h2>
+      <img src="assets-frontend/img/Component 12.png" alt="Gambar Promo" class="promo-icon">
+      
+    </div>
+    <div class="right-side">
+      <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <!-- Carousel item 1 -->
+          <div class="carousel-item active">
+            <div class="row">
+              <div class="col-6">
+                <img src="assets-frontend/img/carousel/carousel1.jpg" class="d-block w-100" alt="Promo 1">
+              </div>
+              <div class="col-6">
+                <img src="assets-frontend/img/carousel/carousel2.png" class="d-block w-100" alt="Promo 2">
+              </div>
+            </div>
+          </div>
+          <!-- Carousel item 2 -->
+          <div class="carousel-item">
+            <div class="row">
+              <div class="col-6">
+                <img src="assets-frontend/img/carousel/carousel3.png" class="d-block w-100" alt="Promo 3">
+              </div>
+              <div class="col-6">
+                <img src="assets-frontend/img/carousel/carousel1.jpg" class="d-block w-100" alt="Promo 4">
+              </div>
+            </div>
+          </div>
+          <!-- Carousel item 3 -->
+          <div class="carousel-item">
+            <div class="row">
+              <div class="col-6">
+                <img src="assets-frontend/img/carousel/carousel2.png" class="d-block w-100" alt="Promo 5">
+              </div>
+              <div class="col-6">
+                <img src="assets-frontend/img/carousel/carousel3.png" class="d-block w-100" alt="Promo 6">
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="carousel-item">
-          <img src="assets-frontend/img/carousel/carousel2.png" class="d-block w-100" alt="">
-        </div>
-        <div class="carousel-item">
-          <img src="assets-frontend/img/carousel/carousel3.png" class="d-block w-100" alt="">
-        </div>
+        <!-- Carousel controls -->
+        <button class="carousel-control-prev1" type="button1" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon1" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next2" type="button1" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+          <span class="carousel-control-next-icon2" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
       </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+
 
       <!-- Carousel control buttons -->
       <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
@@ -239,13 +278,158 @@
 </section><!-- /Third Section -->
 
 <section><!-- Fourth Section -->
+<section id="fourth">
+  <div id="cardCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <!-- Slide 1 -->
+      <div class="carousel-item active">
+        <div class="d-flex justify-content-center gap-3">
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/1.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/2.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/3.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/1.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/2.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+        </div>
+      </div>
+      <!-- Slide 2 -->
+      <div class="carousel-item">
+        <div class="d-flex justify-content-center gap-3">
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/3.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/1.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/2.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/3.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/1.png" alt="Card Image" class="card-image">
+            <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Navigasi Carousel -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#cardCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#cardCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</section><!-- /Fourth Section -->
+<section><!-- Fifth Section -->
+<section id="fifth">
+  <section class="image-section py-5">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-4 mb-4">
+          <div class="image-card">
+            <img src="assets-frontend/img/review/1.png" alt="Image 1" class="img-fluid">
+            <a href="#" class="btn btn-primary mt-2">Download</a>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="image-card">
+            <img src="assets-frontend/img/review/2.png" alt="Image 2" class="img-fluid">
+            <a href="#" class="btn btn-primary mt-2">Download</a>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="image-card">
+            <img src="assets-frontend/img/review/3.png" alt="Image 3" class="img-fluid">
+            <a href="#" class="btn btn-primary mt-2">Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section><!-- /fifth Section -->
 
-<!-- <div class="card-container">
-        <img src="assets-frontend/img/card2/card1.png" alt="Card Image" class="card-image">
-        <a href="#" class="button-overlay">Lihat Detail</a>
-    </div> -->
+<section><!-- Sixth Section -->
+<section id="sixth">
+  <section class="background-section py-5">
+  <div style="display: flex; justify-content: center; align-items: center; height: 10vh;">
+  <h1 id="buath1" class="feature">
+    <i></i> Why we should learn English according to experts
+  </h1>
+</div>
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-4 mb-4">
+          <div class="image-card">
+            <img src="assets-frontend/img/paraahli/1.png" alt="Image 1" class="img-fluid">
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="image-card">
+            <img src="assets-frontend/img/paraahli/2.png" alt="Image 2" class="img-fluid">
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="image-card">
+            <img src="assets-frontend/img/paraahli/3.png" alt="Image 3" class="img-fluid">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section><!-- /sixth Section -->
 
-</section><!-- /Fourth Section -->  
+  <section><!-- Seventh Section --> 
+  <section id="seventh">
+    
+        <div class="image-container">
+          <img src="assets-frontend/img/zoom.png" alt="Zoom Image">
+          <a href="#" class="button-overlay" data-toggle="modal" data-target="#imageModal">Lihat Detail</a>
+        </div>
+  </section>
+
+  </section><!-- /Seventh Section -->
+<!-- Eighth Section -->
+  <section id="eighth-section" class="ruangguru-section">
+  <div class="text-container">
+    <h1><strong>Coba belajar langsung di aplikasi Ruangguru</strong></h1>
+    <p>Download sekarang!</p>
+    <div class="button-container">
+      <button class="Button">Download</button>
+    </div>
+  </div>
+  <div class="image-container">
+    <img src="assets-frontend/img/hp.png" alt="Gambar HP">
+  </div>
+</section><!-- /Eighth Section -->
+<!-- Ninth Section -->
+<section id="ninth-section">
+  <div class="logo-container">
+    <img src="assets-frontend/img/mybimo.png" alt="Logo">
+  </div>
+</section>
+ <!-- /Ninth Section -->
+
 
 <!-- Link Bootstrap -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
