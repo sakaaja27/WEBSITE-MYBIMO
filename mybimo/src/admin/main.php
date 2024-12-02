@@ -139,6 +139,11 @@ $dataJson = json_encode($data);
         </div>
     </div>
 </div>
+<div class="card-header d-flex justify-content-between align-items-center">
+    <a href="../src/admin/resource/excel.php" class="btn btn-success">
+        <i class="bi bi-file-earmark-excel"></i> Export to Excel
+    </a>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

@@ -31,7 +31,7 @@ if (isset($_POST['add_transaksi'])) {
                 echo "<script>alert('Gagal mengunggah gambar'); window.location.href='admin/index.php?transaksi';</script>";
                 exit;
             }
-        } else {    
+        } else {
             echo "<script>alert('Ekstensi gambar tidak valid atau ukuran terlalu besar'); window.location.href='admin/index.php?transaksi';</script>";
             exit;
         }
@@ -177,6 +177,11 @@ function base_url($path = '')
                                             Add Data
                                         </button>
                                     </li>
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <a href="../src/admin/resource/excel2.php" class="btn btn-success">
+                                            <i class="bi bi-file-earmark-excel"></i> Export to Excel
+                                        </a>
+                                    </div>
                                 </ul>
                             </div>
                         </div>
@@ -311,12 +316,12 @@ function base_url($path = '')
                         <select name="id_user" id="id_user" class="form-control">
                             <?php
                             $users->data_seek(0);
-                            while ($user = $users->fetch_assoc()): 
+                            while ($user = $users->fetch_assoc()):
                                 if (!in_array($user['id'], $transaksi_users)): ?>
                                     <option value="<?= $user['id'] ?>">
                                         <?= $user['username'] ?>
                                     </option>
-                                <?php endif; 
+                            <?php endif;
                             endwhile; ?>
                         </select>
                     </div>
