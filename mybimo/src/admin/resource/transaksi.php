@@ -150,7 +150,7 @@ $pembayarans = $conn->query("SELECT * FROM pembayaran");
 // Di file config atau functions
 function base_url($path = '')
 {
-    $base_url = 'http://localhost/WEBSITE%20MYBIMO/mybimo/src/'; // Sesuaikan dengan domain Anda
+    $base_url = 'http://localhost/WEBSITE-MYBIMO/mybimo/src/'; // Sesuaikan dengan domain Anda
     return $base_url . $path;
 }
 ?>
@@ -177,11 +177,25 @@ function base_url($path = '')
                                             Add Data
                                         </button>
                                     </li>
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <a href="../src/admin/resource/excel2.php" class="btn btn-success">
-                                            <i class="bi bi-file-earmark-excel"></i> Export to Excel
-                                        </a>
-                                    </div>
+                                    <form action="../src/admin/resource/excel.php?export_type=transaksi" method="GET" class="mb-3">
+                                        <input type="hidden" name="export_type" value="transaksi">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label for="tanggal_awal">Tanggal Awal:</label>
+                                                <input type="date" name="tanggal_awal" id="tanggal_awal" class="form-control">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="tanggal_akhir">Tanggal Akhir:</label>
+                                                <input type="date" name="tanggal_akhir" id="tanggal_akhir" class="form-control">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label>&nbsp;</label><br>
+                                                <button type="submit" class="btn btn-primary">
+                                                    Export to Excel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
                                 </ul>
                             </div>
                         </div>
