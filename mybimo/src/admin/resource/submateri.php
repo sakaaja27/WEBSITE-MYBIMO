@@ -146,7 +146,7 @@ if (isset($_POST['delete'])) {
                                     <td>
                                         <?php if (!empty($row['upload_file'])): ?>
                                             <?php
-                                            $file_url = 'http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/' . rawurldecode($row['upload_file']);
+                                            $file_url = 'http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/' . rawurldecode($row['upload_file']);
                                             ?>
                                             <a href="<?php echo $file_url; ?>" target="_blank"><?php echo basename($row['upload_file']); ?></a>
                                         <?php else: ?>

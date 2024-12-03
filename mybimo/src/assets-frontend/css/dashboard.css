@@ -285,9 +285,9 @@ body {
 }
 
 .promo-icon {
-  width: 50%; /* Ukuran gambar akan disesuaikan dengan lebar elemen induk */
-  max-width: 300px; /* Membatasi ukuran gambar agar tidak lebih besar dari 300px */
-  height: auto; /* Menjaga aspek rasio gambar tetap utuh */
+  width: 50%; 
+  max-width: 300px; 
+  height: auto; 
   margin-bottom: 0px; /* Memberikan jarak di bawah gambar */
 }
 
@@ -297,7 +297,8 @@ body {
   justify-content: space-between;
   background: linear-gradient(90deg, #006aff, #4400ff);
   border-radius: 10px;
-  padding: 20px;
+  padding: 0px;
+  margin-top:30px;
   color: white;
 }
 
@@ -312,12 +313,41 @@ body {
   object-fit: cover;
 }
 
-.carousel-control-prev-icon1,
-.carousel-control-next-icon2 {
-  background-color: white;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
+.promo-wrapper {
+  display: flex;
+  align-items: flex-start; /* Align items at the start */
+  justify-content: space-between; /* Space between the left and right sides */
+  background: linear-gradient(90deg, #006aff, #4400ff);
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+  margin: 0 auto;
+  width: 100%; 
+}
+
+.left-side {
+  flex: 2; 
+  padding: 5px;
+}
+
+.carousel-container {
+  flex:4;
+}
+
+.promo-icon {
+  max-width: 100%; 
+  height: auto; 
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .promo-wrapper {
+    flex-direction: column; /* Stack items vertically on smaller screens */
+  }
+
+  .left-side, .carousel-container {
+    width: 100%; /* Make each side full width */
+  }
 }
 @media (max-width: 768px) {
   .carousel-inner .row {

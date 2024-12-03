@@ -255,7 +255,7 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                                     <td>
                                         <?php
                                         echo !empty($row['upload_image'])
-                                            ? '<img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/' . htmlspecialchars($row['upload_image']) . '" alt="User  Image" width="50" height="50">'
+                                            ? '<img src="http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/' . htmlspecialchars($row['upload_image']) . '" alt="User  Image" width="50" height="50">'
                                             : 'Tidak ada foto';
                                         ?>
                                     </td>
@@ -305,7 +305,7 @@ $result = $conn->query("SELECT * FROM users ORDER BY id DESC");
                                                         <input type="file" class="form-control" name="upload_image" accept=".jpg,.jpeg,.png">
                                                         <small class="text-muted">Biarkan kosong jika tidak ingin mengganti foto.</small>
                                                         <div class="mt-2">
-                                                            <img src="http://localhost/WEBSITE-MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['upload_image']); ?>" alt="Icon" width="60" height="60">
+                                                            <img src="http://localhost/WEBSITE%20MYBIMO/mybimo/src/getData/<?php echo htmlspecialchars($row['upload_image']); ?>" alt="Icon" width="60" height="60">
                                                         </div>
                                                     </div>
                                                 </div>

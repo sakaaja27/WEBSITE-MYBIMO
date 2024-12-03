@@ -1,18 +1,24 @@
-const slides = document.querySelectorAll('.slide');
-const prev = document.querySelector('.prev');
-const next = document.querySelector('.next');
-let currentSlide = 0; 1 
+// Get the carousel container and inner elements
+const carouselContainer = document.querySelector('.carousel-container');
+const carouselInner = document.querySelector('.carousel-inner');
+const carouselItems = document.querySelectorAll('.carousel-item');
 
-const showSlide = (n) => {
-  slides[currentSlide].style.marginLeft = '-100%';
-  currentSlide = (n + slides.length) % slides.length;
-  slides[currentSlide].style.marginLeft = '0';
-};
+// Function to set the height of the carousel container
+function setCarouselHeight() {
+    // Get the height of the active carousel item
+    const activeItem = document.querySelector('.carousel-item.active');
+    const activeItemHeight = activeItem.offsetHeight;
 
-prev.addEventListener('click', () => {
-  showSlide(currentSlide - 1);
-});
+    // Set the height of the carousel container
+    carouselContainer.style.height = `${activeItemHeight}px`;
+}
 
-next.addEventListener('click', () => {
-  showSlide(currentSlide + 1);
+// Call the function when the page loads
+setCarouselHeight();
+
+// Call the function when the carousel slides
+document.addEventListener('DOMContentLoaded', function() {
+    carouselInner.addEventListener('slide.bs.carousel', function() {
+        setCarouselHeight();
+    });
 });
