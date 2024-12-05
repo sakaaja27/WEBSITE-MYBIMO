@@ -9,10 +9,11 @@ if (isset($_POST['add_data'])) {
     $pilihan_b = $_POST['pilihan_b'];
     $pilihan_c = $_POST['pilihan_c'];
     $jawaban_benar = $_POST['jawaban_benar'];
+    $created_at = date('Y-m-d H:i:s');
 
     if ($id_materi && $nama_soal && $pilihan_a && $pilihan_b && $pilihan_c && $jawaban_benar) {
         $query = "INSERT INTO soal_submateri (id_materi, nama_soal, pilihan_a, pilihan_b, pilihan_c, jawaban_benar, created_at) 
-                  VALUES ('$id_materi', '$nama_soal', '$pilihan_a', '$pilihan_b', '$pilihan_c', '$jawaban_benar', NOW())";
+          VALUES ('$id_materi', '$nama_soal', '$pilihan_a', '$pilihan_b', '$pilihan_c', '$jawaban_benar', '$created_at')";
         $conn->query($query);
     } else {
         echo "<script>alert('Mohon lengkapi semua data!');</script>";
@@ -29,14 +30,16 @@ if (isset($_POST['update_soal'])) {
     $pilihan_c = $_POST['pilihan_c'];
     $jawaban_benar = $_POST['jawaban_benar'];
 
+    $created_at = date('Y-m-d H:i:s');
     $query = "UPDATE soal_submateri SET 
-              id_materi='$id_materi', 
-              nama_soal='$nama_soal', 
-              pilihan_a='$pilihan_a', 
-              pilihan_b='$pilihan_b', 
-              pilihan_c='$pilihan_c', 
-              jawaban_benar='$jawaban_benar' 
-              WHERE id='$id'";
+          id_materi='$id_materi', 
+          nama_soal='$nama_soal', 
+          pilihan_a='$pilihan_a', 
+          pilihan_b='$pilihan_b', 
+          pilihan_c='$pilihan_c', 
+          jawaban_benar='$jawaban_benar',
+          created_at='$created_at' 
+          WHERE id='$id'";
     $conn->query($query);
 }
 
@@ -126,14 +129,14 @@ $sub_materi = $conn->query("SELECT m.*, m.judul_materi
                                     <td><?php echo htmlspecialchars($row['pilihan_b']); ?></td>
                                     <td><?php echo htmlspecialchars($row['pilihan_c']); ?></td>
                                     <td><?php echo htmlspecialchars($row['jawaban_benar']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['created_at']); ?></td>
+                                    <td><?php echo date('d-m-Y H:i', strtotime($row['created_at'])); ?></td>
                                     <td>
                                         <!-- Tombol Edit -->
                                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $row['id']; ?>">Edit</button>
                                         <!-- Tombol Hapus -->
                                         <form method="POST" style="display:inline;">
                                             <input type="hidden" name="delete_soal_id" value="<?php echo $row['id']; ?>">
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?');">Delete</button>
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus soal ini?');">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -189,6 +192,11 @@ $sub_materi = $conn->query("SELECT m.*, m.judul_materi
                                                             <option value="C" <?php echo $row['jawaban_benar'] == 'C' ? 'selected' : ''; ?>>c</option>
                                                         </select>
                                                     </div>
+                                                    <div class="mb-3">
+                                                        <label for="created_at" class="form-label">Tanggal dan Waktu</label>
+                                                        <input type="datetime-local" class="form-control" name="created_at" value="<?php echo date('Y-m-d\TH:i', strtotime($row['created_at'])); ?>" required>
+                                                    </div>
+
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -252,6 +260,11 @@ $sub_materi = $conn->query("SELECT m.*, m.judul_materi
                             <option value="C">c</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label for="created_at" class="form-label">Tanggal dan Waktu</label>
+                        <input type="datetime-local" class="form-control" name="created_at" required>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
