@@ -340,19 +340,19 @@
             <div class="col-md-4 mb-4">
               <div class="image-card">
                 <img src="assets-frontend/img/review/1.png" alt="Image 1" class="img-fluid">
-                <a href="#" class="btn btn-primary mt-2">Download</a>
+                <a href="#" class="btn btn-primary mt-2" data-toggle="modal" data-target="#imageModal">Download</a>
               </div>
             </div>
             <div class="col-md-4 mb-4">
               <div class="image-card">
                 <img src="assets-frontend/img/review/2.png" alt="Image 2" class="img-fluid">
-                <a href="#" class="btn btn-primary mt-2">Download</a>
+                <a href="#" class="btn btn-primary mt-2" data-toggle="modal" data-target="#imageModal">Download</a>
               </div>
             </div>
             <div class="col-md-4 mb-4">
               <div class="image-card">
                 <img src="assets-frontend/img/review/3.png" alt="Image 3" class="img-fluid">
-                <a href="#" class="btn btn-primary mt-2">Download</a>
+                <a href="#" class="btn btn-primary mt-2" data-toggle="modal" data-target="#imageModal">Download</a>
               </div>
             </div>
           </div>
@@ -401,10 +401,10 @@
           <!-- Eighth Section -->
           <section id="eighth-section" class="ruangguru-section">
             <div class="text-container">
-              <h1><strong>Coba belajar langsung di aplikasi Ruangguru</strong></h1>
+              <h1><strong>Coba belajar langsung di aplikasi MyBimo</strong></h1>
               <p>Download sekarang!</p>
               <div class="button-container">
-                <button class="Button">Download</button>
+                <button class="Button" data-toggle="modal" data-target="#imageModal">Download</button>
               </div>
             </div>
             <div class="image-container">
