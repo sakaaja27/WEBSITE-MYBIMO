@@ -38,8 +38,16 @@ if (isset($_POST['add_submateri'])) {
 
     $upload_file = '';
     if (isset($_FILES['upload_file']) && $_FILES['upload_file']['error'] == 0) {
-        $upload_file = 'storagesubmateri/' .basename($_FILES['upload_file']['name']);
-        move_uploaded_file($_FILES['upload_file']['tmp_name'], $upload_dir . basename($_FILES['upload_file']['name']));
+        $file_exstension = strtolower(pathinfo($_FILES['upload_file']['name'], PATHINFO_EXTENSION));
+        
+        // Cek apakah file yang diupload adalah PDF
+        if ($file_exstension == 'pdf') {
+            $upload_file = 'storagesubmateri/' . basename($_FILES['upload_file']['name']);
+            move_uploaded_file($_FILES['upload_file']['tmp_name'], $upload_dir . basename($_FILES['upload_file']['name']));
+        } else {
+            echo "<script>alert('Hanya file PDF yang diperbolehkan.'); window.location.href='admin/index.php?submateri';</script>";
+            exit; 
+        }
     }
 
     $sql = "INSERT INTO sub_materi (id_materi, nama_sub, upload_file, created_at) VALUES (?, ?, ?, NOW())";
