@@ -5,8 +5,8 @@ require_once '../koneksi/koneksi.php';
 if (isset($_POST['add_zoom'])) {
     $judul_zoom = $_POST['judul_zoom'];
     $link_zoom = $_POST['link_zoom'];
-    $tanggal = date('Y-m-d');
-    $waktu = date('H:i:s');
+    $tanggal = $_POST['tanggal'];
+    $waktu = $_POST['waktu'];
 
     $query = "INSERT INTO zoom (nama_judul, link_zoom, tanggal, waktu) 
               VALUES ('$judul_zoom', '$link_zoom', '$tanggal', '$waktu')";
@@ -23,8 +23,8 @@ if (isset($_POST['update_zoom'])) {
     $id = $_POST['id'];
     $judul_zoom = $_POST['judul_zoom'];
     $link_zoom = $_POST['link_zoom'];
-    $tanggal = date('Y-m-d');
-    $waktu = date('H:i:s');
+    $tanggal = $_POST['tanggal'];
+    $waktu = $_POST['waktu'];
 
     $query = "UPDATE zoom SET 
               nama_judul = '$judul_zoom', 
@@ -44,8 +44,8 @@ if (isset($_POST['update_zoom'])) {
 if (isset($_POST['delete'])) {
     $id = $_POST['delete'];
     $query = "DELETE FROM zoom WHERE id = '$id'";
-    
-    if($conn->query($query)) {
+
+    if ($conn->query($query)) {
         echo "<script>alert('Data berhasil dihapus'); window.location.href='admin/index.php?zoom';</script>";
     } else {
         echo "<script>alert('Gagal menghapus data');</script>";
@@ -138,16 +138,14 @@ $result = $conn->query($query);
                                                         <input type="text" class="form-control" name="link_zoom"
                                                             value="<?php echo $row['link_zoom']; ?>" required>
                                                     </div>
-                                                    <!-- <div class="mb-3">
-                                                        <label class="form-label">Tanggal</label>
-                                                        <input type="number" class="form-control" name="link_zoom"
-                                                            value="<?php echo $row['link_zoom']; ?>" required>
+                                                    <div class="mb-3">
+                                                        <label for="form-label">Tanggal</label>
+                                                        <input type="date" class="form-control" name="tanggal" value="<?php echo $row['tanggal']; ?>" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Waktu</label>
-                                                        <input type="number" class="form-control" name="link_zoom"
-                                                            value="<?php echo $row['link_zoom']; ?>" required>
-                                                    </div> -->
+                                                        <label for="form-label">Waktu</label>
+                                                        <input type="time" class="form-control" name="waktu" id="waktu"<?php echo $row['waktu']; ?>" required>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
@@ -182,14 +180,22 @@ $result = $conn->query($query);
                         <label class="form-label">Judul Zoom</label>
                         <input type="text" class="form-control" name="judul_zoom" required>
                     </div>
-                        <div class="mb-3">
-                            <label class="form-label">Link Zoom</label>
-                            <input type="text" class="form-control" name="link_zoom" required>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" name="add_zoom" class="btn btn-primary">Simpan</button>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label">Link Zoom</label>
+                        <input type="text" class="form-control" name="link_zoom" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="form-label">Tanggal</label>
+                        <input type="date" class="form-control" name="tanggal" value="<?php echo $row['tanggal']; ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="form-label">Waktu</label>
+                        <input type="time" class="form-control" name="waktu" id="waktu" value="<?php echo $row['waktu']; ?>" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" name="add_zoom" class="btn btn-primary">Simpan</button>
+                    </div>
                 </div>
             </form>
         </div>
