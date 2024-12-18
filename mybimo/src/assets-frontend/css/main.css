@@ -1,16 +1,15 @@
-
-
 :root {
-  --default-font: "Open Sans",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --heading-font: "Jost",  sans-serif;
-  --nav-font: "Poppins",  sans-serif;
+  --default-font: "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --heading-font: "Jost", sans-serif;
+  --nav-font: "Poppins", sans-serif;
 }
 
-
-:root { 
+:root {
   --background-color: #ffffff; /* Background color for the entire website, including individual sections */
   --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #1B78F2; /* Color for headings, subheadings and title throughout the website */
+  --heading-color: #1b78f2; /* Color for headings, subheadings and title throughout the website */
   --accent-color: #47b2e4; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
   --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
@@ -24,7 +23,7 @@
 }
 
 .dark-background {
-  --background-color: #1B78F2;
+  --background-color: #1b78f2;
   --default-color: #ffffff;
   --heading-color: #ffffff;
   --surface-color: #1a6bd6;
@@ -73,7 +72,7 @@ h6 {
 # Global Header
 --------------------------------------------------------------*/
 .header {
-  --background-color: #1B78F2;
+  --background-color: #1b78f2;
   --heading-color: #ffffff;
   color: var(--default-color);
   background-color: var(--background-color);
@@ -81,7 +80,6 @@ h6 {
   transition: all 0.5s;
   z-index: 997;
 }
-
 
 .header .logo {
   line-height: 1;
@@ -110,7 +108,6 @@ h6 {
   margin: 0 0 0 30px;
   border-radius: 50px;
   transition: 0.3s;
-
 }
 .header .btn-getstarted,
 .header .btn-getstarted:focus {
@@ -121,11 +118,29 @@ h6 {
   margin: 0 0 0 30px;
   border-radius: 50px;
   transition: 0.3s;
-
 }
 
+@media (max-width: 767.98px) {
+  .why-us-img img {
+    width: 10%; 
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+}
+/* Custom Responsive Adjustments */
+@media (max-width: 991.98px) {
+  .header {
+    padding: 10px 0;
+  }
+}
 
-
+/* Hover Effects */
+.btn-primary:hover,
+.btn-outline-primary:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+  transition: all 0.3s ease;
+}
 
 
 
@@ -207,7 +222,6 @@ section,
 }
 
 @media (max-width: 1199px) {
-
   section,
   .section {
     scroll-margin-top: 66px;
@@ -276,7 +290,6 @@ section,
   margin: 0; /* Hilangkan margin default */
   padding: 0; /* Hilangkan padding default */
   overflow: hidden; /* Hindari overflow jika ada elemen yang keluar dari viewport */
-
 }
 
 .circle-background {
@@ -304,7 +317,6 @@ section,
   font-weight: 700;
   line-height: 56px;
 }
-
 
 .hero .btn-get-started {
   color: #000000;
@@ -372,7 +384,6 @@ section,
 
 .clients .swiper-slide img {
   transition: 0.3s;
-
 }
 
 .clients .swiper-slide img:hover {
@@ -383,9 +394,8 @@ section,
 # Why Us Section
 --------------------------------------------------------------*/
 .why-us {
-  background-color: #1B78F2;
+  background-color: #1b78f2;
   padding: 40px 0;
-  
 }
 
 .why-us .content h2 {
@@ -393,7 +403,6 @@ section,
   font-weight: bold;
   font-size: 45px;
   margin-left: 300px;
-  
 }
 
 .why-us .content p {
@@ -491,24 +500,21 @@ section,
   display: flex;
   align-items: center;
   justify-content: center;
-  
 }
 
 .why-us .why-us-img img {
   max-height: 100%;
   margin-right: 300px;
-
 }
 
 /*--------------------------------------------------------------
 # Skills Section
 --------------------------------------------------------------*/
 .skills {
-  background-color: #1B78F2;
+  background-color: #1b78f2;
   display: flex;
   align-items: center;
   padding: 30px 0;
-
 }
 
 .skills .content {
@@ -524,9 +530,8 @@ section,
 }
 
 .skills .content h2 {
-
   color: #ffc107;
-  font-weight: bold; 
+  font-weight: bold;
   font-size: 45px;
   margin-right: 300px;
 }
@@ -633,9 +638,8 @@ section,
 # Why Us 3 Section
 --------------------------------------------------------------*/
 .why-us3 {
-  background: linear-gradient(to bottom, #1B78F2,#529AF8);
+  background: linear-gradient(to bottom, #1b78f2, #529af8);
   padding: 30px 0;
-
 }
 
 .why-us3 .content h2 {
@@ -647,7 +651,7 @@ section,
 
 .why-us3 .content p {
   font-size: large;
-  color:#ffffff;
+  color: #ffffff;
   margin-left: 300px;
 }
 
@@ -751,7 +755,7 @@ section,
 # Download Section 
 --------------------------------------------------------------*/
 .download-section {
-  background: linear-gradient(to bottom, #529AF8,#ffffff);
+  background: linear-gradient(to bottom, #529af8, #ffffff);
 }
 
 .download-section h1 {
@@ -784,10 +788,11 @@ section,
   margin-block: 200px;
 }
 
+
+
 /*--------------------------------------------------------------
 # Title Tengah 
 --------------------------------------------------------------*/
-
 
 .title-tengah {
   color: #ffffff;

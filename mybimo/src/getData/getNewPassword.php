@@ -22,7 +22,7 @@ include '../koneksi/koneksi.php';
         $stmt = $conn->prepare($sql);
         $stmt-> bind_param("ss", $newpassword_hashed, $email);
         if ($stmt->execute()) {
-            echo json_encode(array("status" => true, "message" => "New password successfully updated."));
+            echo json_encode(value: array("status" => true, "message" => "New password successfully updated."));
         } else {
             echo json_encode(array("status" => false, "message" => "Failed to update password."));
         }
