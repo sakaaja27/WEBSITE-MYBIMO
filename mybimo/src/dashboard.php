@@ -1,3 +1,10 @@
+<?php require_once "./middlewares/auth.middleware.php"; ?>
+<?php
+
+
+
+// Jika pengguna memiliki role selain 0, biarkan mereka mengakses halaman
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -74,8 +81,8 @@
     <div class="container">
       <div class="row gy-4 align-items-center">
         <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center text-center text-lg-start" data-aos="zoom-out">
-          <h1>Empowering Learning,<br>Anytime, Anywhere <br>with MyBimo!</h1>
-          <h5>Improve your English on MyBimo</h5>
+          <p class="text-white fa-2x fw-bold display-5">Empowering Learning,<br>Anytime, Anywhere <br>with MyBimo!</p>
+          <p class="text-white fw-bold">Improve your English on MyBimo</p>
         </div>
         <div class="col-lg-6 order-1 order-lg-2" data-aos="zoom-out" data-aos-delay="200">
           <img src="assets-frontend/img/logodashboard1.png" class="img-fluid animated" alt="">
@@ -143,41 +150,30 @@
       </h1>
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-4">
         <div class="col">
-          <div class="card h-100">
-            <img src="assets-frontend/img/Card/card1.png" class="card-img-top" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">Vocabulary</h5>
-              <p class="card-text">
-                <i class="fa fa-star" aria-hidden="true"></i> Interactive and fun vocabulary learning.<br>
-                <i class="fa fa-star" aria-hidden="true"></i> Daily new words and quizzes.<br>
-                <i class="fa fa-star" aria-hidden="true"></i> Boosts speaking and comprehension skills.
-              </p>
-              <a href="#" class="btn btn-orange" data-bs-toggle="modal" data-bs-target="#imageModal">See Details</a>
-            </div>
-            <div class="card-footer">
-              <small class="text-body-secondary">Last updated 3 mins ago</small>
-            </div>
+          <div class="feature-item">
+            <img src="assets-frontend/img/Card/card1.png" class="img-fluid" alt="Vocabulary">
+            <h5 class="mt-2">Vocabulary</h5>
+            <p>
+              <i class="fa fa-star" aria-hidden="true"></i> Interactive and fun vocabulary learning.<br>
+              <i class="fa fa-star" aria-hidden="true"></i> Daily new words and quizzes.<br>
+              <i class="fa fa-star" aria-hidden="true"></i> Boosts speaking and comprehension skills.
+            </p>
+            <a href="#" class="btn btn-orange" data-bs-toggle="modal" data-bs-target="#imageModal">See Details</a>
           </div>
         </div>
-        <!-- Repeat similar structure for other cards -->
         <div class="col">
-          <div class="card h-100">
-            <img src="assets-frontend/img/Card/card2.png" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title">Grammar</h5>
-              <p class="card-text">
-                <i class="fa fa-star" aria-hidden="true"></i> Learn grammar with real-life examples.<br>
-                <i class="fa fa-star" aria-hidden="true"></i> Easy-to-understand explanations.<br>
-                <i class="fa fa-star" aria-hidden="true"></i> Practical exercises for all levels.
-              </p>
-              <a href="#" class="btn btn-orange" data-bs-toggle="modal" data-bs-target="#imageModal">See Details</a>
-            </div>
-            <div class="card-footer">
-              <small class="text-body-secondary">Last updated 3 mins ago</small>
-            </div>
+          <div class="feature-item">
+            <img src="assets-frontend/img/Card/card2.png" class="img-fluid" alt="Grammar">
+            <h5 class="mt-2">Grammar</h5>
+            <p>
+              <i class="fa fa-star" aria-hidden="true"></i> Learn grammar with real-life examples.<br>
+              <i class="fa fa-star" aria-hidden="true"></i> Easy-to-understand explanations.<br>
+              <i class="fa fa-star" aria-hidden="true"></i> Practical exercises for all levels.
+            </p>
+            <a href="#" class="btn btn-orange" data-bs-toggle="modal" data-bs-target="#imageModal">See Details</a>
           </div>
         </div>
-        <!-- Add more cards as needed -->
+        <!-- Add more feature items as needed -->
       </div>
     </div>
   </section>
@@ -201,31 +197,31 @@
             <div class="carousel-inner">
               <div class="carousel-item active">
                 <div class="row">
-                  <div class="col-12 col-md-6">
-                    <img src="assets-frontend/img/carousel/carousel1.jpg" class="d-block w-100" alt="Promo 1">
+                  <div class="col-6 col-md-6">
+                    <img src="assets-frontend/img/carousel/carousel1.jpg" class="d-block w-100 img-fluid" alt="Promo 1">
                   </div>
-                  <div class="col-12 col-md-6">
-                    <img src="assets-frontend/img/carousel/carousel2.png" class="d-block w-100" alt="Promo 2">
-                  </div>
-                </div>
-              </div>
-              <div class="carousel-item">
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <img src="assets-frontend/img/carousel/carousel3.png" class="d-block w-100" alt="Promo 3">
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <img src="assets-frontend/img/carousel/carousel1.jpg" class="d-block w-100" alt="Promo 4">
+                  <div class="col-6 col-md-6">
+                    <img src="assets-frontend/img/carousel/carousel2.png" class="d-block w-100 img-fluid" alt="Promo 2">
                   </div>
                 </div>
               </div>
               <div class="carousel-item">
                 <div class="row">
-                  <div class="col-12 col-md-6">
-                    <img src="assets-frontend/img/carousel/carousel2.png" class="d-block w-100" alt="Promo 5">
+                  <div class="col-6 col-md-6">
+                    <img src="assets-frontend/img/carousel/carousel3.png" class="d-block w-100 img-fluid" alt="Promo 3">
                   </div>
-                  <div class="col-12 col-md-6">
-                    <img src="assets-frontend/img/carousel/carousel3.png" class="d-block w-100" alt="Promo 6">
+                  <div class="col-6 col-md-6">
+                    <img src="assets-frontend/img/carousel/carousel1.jpg" class="d-block w-100 img-fluid" alt="Promo 4">
+                  </div>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <div class="row">
+                  <div class="col-6 col-md-6">
+                    <img src="assets-frontend/img/carousel/carousel2.png" class="d-block w-100 img-fluid" alt="Promo 5">
+                  </div>
+                  <div class="col-6 col-md-6">
+                    <img src="assets-frontend/img/carousel/carousel3.png" class="d-block w-100 img-fluid" alt="Promo 6">
                   </div>
                 </div>
               </div>
@@ -246,55 +242,42 @@
   <!-- /Third Section -->
 
   <!-- Fourth Section -->
-    <section id="fourth">
-    <div id="cardCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <!-- Slide 1 -->
-        <div class="carousel-item active">
-          <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <div class="card-container">
-              <img src="assets-frontend/img/imgbawah/1.png" alt="Card Image" class="card-image img-fluid">
-              <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
-            </div>
-            <div class="card-container">
-              <img src="assets-frontend/img/imgbawah/2.png" alt="Card Image" class="card-image img-fluid">
-              <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
-            </div>
-            <div class="card-container">
-              <img src="assets-frontend/img/imgbawah/3.png" alt="Card Image" class="card-image img-fluid">
-              <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
-            </div>
+  <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <div class="card-wrapper">
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/1.png" alt="Card Image" class="small-img img-fluid">
+            <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
           </div>
-        </div>
-        <!-- Slide 2 -->
-        <div class="carousel-item">
-          <div class="d-flex justify-content-center gap-3 flex-wrap">
-            <div class="card-container">
-              <img src="assets-frontend/img/imgbawah/1.png" alt="Card Image" class="card-image img-fluid">
-              <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
-            </div>
-            <div class="card-container">
-              <img src="assets-frontend/img/imgbawah/2.png" alt="Card Image" class="card-image img-fluid">
-              <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
-            </div>
-            <div class="card-container">
-              <img src="assets-frontend/img/imgbawah/3.png" alt="Card Image" class="card-image img-fluid">
-              <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
-            </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/2.png" alt="Card Image" class="small-img img-fluid">
+            <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/3.png" alt="Card Image" class="small-img img-fluid">
+            <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
           </div>
         </div>
       </div>
-      <!-- Navigasi Carousel -->
-      <button class="carousel-control-prev" type="button" data-bs-target="#cardCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#cardCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
+      <div class="carousel-item">
+        <div class="card-wrapper">
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/1.png" alt="Card Image" class="small-img img-fluid">
+            <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/2.png" alt="Card Image" class="small-img img-fluid">
+            <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
+          </div>
+          <div class="card-container">
+            <img src="assets-frontend/img/imgbawah/3.png" alt="Card Image" class="small-img img-fluid">
+            <a href="#" class="button-overlay" data-bs-toggle="modal" data-bs-target="#imageModal">Lihat Detail</a>
+          </div>
+        </div>
+      </div>
     </div>
-  </section>
+  </div>
   <!-- /Fourth Section -->
 
   <!-- Fifth Section -->
@@ -393,6 +376,7 @@
     </div>
   </section><!-- /Ninth Section -->
 
+  
   <!-- Bootstrap JS, Popper.js, and jQuery -->
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.3/dist/umd/popper.min.js"></script>

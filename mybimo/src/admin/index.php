@@ -1,4 +1,18 @@
 <?php require_once "../middlewares/auth.middleware.php"; ?>
+<?php
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Hapus semua variabel sesi
+    $_SESSION = array();
+
+    // Hapus sesi
+    session_destroy();
+
+    // Redirect ke halaman login setelah logout
+    header("Location:../auth/login.php"); // Ganti dengan URL halaman login Anda
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="zxx" class="js">
 <?php include 'head.php' ?>
