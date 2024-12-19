@@ -1,4 +1,3 @@
-
 <div class="nk-header is-light nk-header-fixed is-light">
     <div class="container-xl wide-xl">
         <div class="nk-header-wrap">
@@ -55,11 +54,9 @@
                             <div class="dropdown-inner">
                                 <ul class="link-list">
                                     <li><a class="dark-switch" href="#"><em class="icon ni ni-moon"></em><span>Dark Mode</span></a></li>
-                                    <!-- Logout Form -->
-                                    <form action="" method="post" style="display: inline;">
-                                        <button type="submit" class="btn btn-link" style="padding: 0; border: none; background: none;">
-                                            <em class="icon ni ni-signout"></em><span>Sign out</span>
-                                        </button>
+                                    <form action="" method="post">
+                                        
+                                        <li><a href="#"><em class="icon ni ni-signout"></em><span>Sign out</span></a></li>
                                     </form>
 
                                 </ul>

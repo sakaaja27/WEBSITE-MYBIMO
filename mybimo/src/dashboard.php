@@ -1,4 +1,4 @@
-<?php require_once "./middlewares/auth.middleware.php"; ?>
+
 <?php
 
 

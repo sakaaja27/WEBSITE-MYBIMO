@@ -1,18 +1,4 @@
 <?php require_once "../middlewares/auth.middleware.php"; ?>
-<?php
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Hapus semua variabel sesi
-    $_SESSION = array();
-
-    // Hapus sesi
-    session_destroy();
-
-    // Redirect ke halaman login setelah logout
-    header("Location:../auth/login.php"); // Ganti dengan URL halaman login Anda
-    exit();
-}
-?>
 <!DOCTYPE html>
 <html lang="zxx" class="js">
 <?php include 'head.php' ?>
@@ -66,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- JavaScript -->
     <!-- Sebelum closing body tag -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>tr
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
     <script src="./assets/js/bundle.js?ver=3.2.2"></script>
     <script src="./assets/js/scripts.js?ver=3.2.2"></script>
     <script src="./assets/js/charts/gd-campaign.js?ver=3.2.2"></script>

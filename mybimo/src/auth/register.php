@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>My Bimo</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
-    <link href="assets/img/favicon.png" rel="icon">
+    <link href="../assets-frontend/img/mybimo.png" rel="icon">
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
     <link href="https://fonts.gstatic.com" rel="preconnect">
     <link href="../assets-frontend/vendor-login/bootstrap/css/bootstrap.min.css" rel="stylesheet">

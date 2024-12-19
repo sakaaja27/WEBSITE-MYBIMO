@@ -1,4 +1,4 @@
-<?php require_once "./middlewares/auth.middleware.php"; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +10,7 @@
   <meta name="keywords" content="">
 
   <!-- Favicons -->
-  <link href="assets-frontend/img/favicon.png" rel="icon">
+  <link href="./assets-frontend/img/mybimo.png" rel="icon">
   <link href="assets-frontend/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Fonts -->
